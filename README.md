@@ -42,5 +42,6 @@ Noaptea se aprinde cu `data-theme="dark"` pe `<html>` (pus de `tema-icc.js` al f
 - **Dosarul** (`v1/`, `v2/`) se schimbă doar când se schimbă aspectul vizibil (culori, mărimi, antet). Reparațiile mici rămân în același dosar, cu etichetă nouă.
 - Trecerea unei aplicații pe o versiune nouă = un PR mic în repo-ul aplicației (schimbă eticheta din `package.json`), testat pe telefon, tabletă și calculator, zi și noapte. Toate PR-urile de trecere intră cu un singur „aprob”.
 - `npm run verifica` (și robotul din `.github/workflows`) verifică la fiecare schimbare că JS-ul e corect și că tema se compilează.
+- Eticheta o creează robotul, din versiunea scrisă în `package.json`, imediat după ce schimbarea intră pe `main`.
 
 Istoricul versiunilor: [CHANGELOG.md](CHANGELOG.md).

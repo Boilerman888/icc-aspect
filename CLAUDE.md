@@ -6,3 +6,4 @@ Instrucțiunile complete de lucru sunt în CLAUDE.md din repo-ul privat platform
 - O schimbare de aspect vizibil = dosar nou (`v2/`); o reparație = etichetă nouă în același dosar. Se trece în CHANGELOG.md.
 - Înainte de commit: `npm run verifica`. Etichetele (`vX.Y.Z`) nu se mută și nu se șterg.
 - Răspunsuri în română, fără coduri interne neexplicate.
+- Etichetele le creează robotul (`.github/workflows/eticheta.yml`) din versiunea din package.json, la fiecare schimbare pe main; nu se împing de mână.

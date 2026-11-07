@@ -1,0 +1,28 @@
+name: Etichetă de versiune
+# După fiecare schimbare pe main: dacă versiunea din package.json nu are încă etichetă (vX.Y.Z), robotul o creează.
+# Etichetele existente nu se mută niciodată (aplicațiile stau fixate pe ele).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  eticheta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund && npm run verifica
+      - name: Creează eticheta
+        run: |
+          v="v$(node -p "require('./package.json').version")"
+          if git rev-parse -q --verify "refs/tags/$v" >/dev/null; then echo "::notice::$v există deja, nu se mută"; exit 0; fi
+          git config user.name "icc-aspect-robot"; git config user.email "actions@github.com"
+          git tag -a "$v" -m "icc-aspect $v"
+          git push origin "$v"
+          echo "::notice::Etichetă creată: $v"
