@@ -116,3 +116,15 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   background-size: 160px 160px;
 }
+
+/* Telefon culcat: ecran lat, dar jos (v1.2.0). Ex.: `culcat:hidden!`, `culcat:table-cell!`. */
+@custom-variant culcat (@media (orientation: landscape) and (max-height: 500px));
+
+/* iPhone (Safari) desenează câmpurile de dată cu aspect propriu: mai înalte și cu lățime minimă fixă, ieșeau din cadru.
+   Le aducem la forma celorlalte câmpuri: aceeași înălțime, text la stânga, se strâng cât e loc (v1.2.0). */
+@layer components {
+  input:is([type=date], [type=time], [type=datetime-local], [type=month]) { @apply min-w-0 appearance-none text-left; }
+  main input:is([type=date], [type=time], [type=datetime-local], [type=month]):not([class*="h-"]) { @apply h-9; }
+  input:is([type=date], [type=time], [type=datetime-local], [type=month])::-webkit-date-and-time-value { text-align: left; margin: 0; min-height: 1.25em; }
+  input:is([type=date], [type=time], [type=datetime-local], [type=month])::-webkit-datetime-edit { padding: 0; }
+}

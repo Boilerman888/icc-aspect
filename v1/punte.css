@@ -1,0 +1,99 @@
+/* icc-aspect v1 · punte.css – puntea pentru aplicațiile Preact cu stilurile vechi (style.css, tema-icc*).
+   Se importă DUPĂ tema.css, cu stilurile vechi puse în stratul „legacy”:
+     @layer legacy, theme, base, components, utilities;
+     @import "./style.css" layer(legacy);   (și celelalte fișiere vechi)
+     @import "tailwindcss/theme.css" layer(theme);
+     @import "tailwindcss/utilities.css" layer(utilities);
+     @import "icc-aspect/v1/tema.css";
+     @import "icc-aspect/v1/punte.css";
+   Aduce clasele vechi (.btn, .seg, .badge, h1, th, .head, .filters, .dates, sarcinile) la regulile aspectului ICC
+   (vezi REGULI.md). Stă în „base”/„components”: bate stilurile vechi, dar nu și clasele Tailwind din pagini. */
+
+/* 1. Unitatea de măsură: style.css punea 14,5 px pe <html>, așa că toate măsurile Tailwind (rem) ieșeau cu ~10% mai mici
+      decât în dashboardcn (text 12,7 px în loc de 14 px, butoane 32,6 px în loc de 36 px). Textul paginilor vechi rămâne 14,5 px. */
+@layer base {
+  html { font-size: 16px; }
+  body { font-size: 14.5px; }
+}
+
+@layer components {
+  /* titluri ca în Registru */
+  main h1 { @apply text-2xl font-semibold tracking-tight text-foreground sm:text-[28px]; }
+  main h2 { @apply font-semibold tracking-tight; }
+
+  /* butoane: aceleași măsuri și greutăți ca btn() din ui.js */
+  .btn { @apply h-9 gap-2 px-4 text-sm font-medium leading-none shadow-xs; }
+  .btn.small { @apply h-8 gap-1.5 px-3 text-sm; }
+  .btn.primary { @apply border-transparent bg-primary text-primary-foreground shadow-xs; }
+  .btn.primary:hover:not(:disabled) { @apply bg-primary/90; }
+  .btn:not(.primary, .danger, .ghost, .del) { @apply border-border bg-background text-foreground dark:border-input dark:bg-input/30; }
+  .btn:not(.primary, .danger, .ghost, .del):hover:not(:disabled) { @apply bg-accent dark:bg-input/50; }
+
+  /* Forma (cerința lui Ion, 07.11): tot ce se apasă și toate insignele sunt dreptunghiuri cu colțuri rotunjite, ca în
+     shadcn (rounded-md); nicio „pastilă”. Rămân rotunde doar punctele de stare, barele de progres și comutatorul pornit/oprit. */
+  :is(.btn, .icon, .chip, .filtru, .q-chip, .sup-badge, .menu-btn, .msel-quick button, .mt-tabs button, .cf-bar .cf) { @apply rounded-md; }
+  :is(.badge, .pill, .tag, .st, .otag, .et, .eticheta, .tc-chip, .mk-tag, .pm-tag, .news-tag, .m-pct, .mk-diff,
+      .task-unseen, .task-cnt, .task-w, .chip span, .folders button span, .ics-badge, .oc-code) { @apply rounded-md; }
+  .cf-bar .cf { @apply font-medium; }
+  .cf-bar .cf :is(button, .cf-sort, .cf-lbl) { @apply font-medium; }
+
+  /* Comutatorul (.seg): exact tabsList / tabsTrigger din ui.js (cel din Catalog, „Produse | Surse de preț”).
+     Când nu încap pe un rând (Sarcini are 10), butoanele trec pe rândul următor ÎN cadru; textul unui buton nu se rupe. */
+  :is(.seg, .vederi, .mt-seg) { @apply inline-flex h-auto max-w-full flex-wrap items-center gap-0.5 overflow-visible rounded-lg border-0 bg-muted p-[3px]; }
+  :is(.seg, .vederi, .mt-seg) button { @apply inline-flex h-8 flex-none cursor-pointer items-center justify-center gap-1.5 rounded-md border border-transparent bg-transparent px-2.5 text-sm font-medium whitespace-nowrap text-foreground/60 shadow-none hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground; }
+  :is(.seg button.on, .vederi button.activ, .mt-seg button.on) { @apply bg-background text-foreground shadow-sm dark:border-input dark:bg-input/30 dark:text-foreground; }
+  .task-tabs .task-cnt { @apply inline-flex h-5 min-w-5 items-center justify-center px-1.5 text-[11px] leading-none font-semibold tabular-nums; }
+
+  /* ferestrele vechi (.modal) ca dialog din ui.js */
+  .modal { @apply rounded-lg border-border bg-background shadow-lg; }
+
+  /* Antetul paginilor (.head) pe telefon ținut drept (cerința lui Ion, 07.11, „ca în Registru”): titlul pe un rând,
+     butoanele câte două, la lățimi egale, pe toată lățimea ecranului; butonul principal la final. Unul rămas singur pe
+     ultimul rând se întinde pe tot rândul (ex. „+ Ofertă nouă” sub „Din șablon” și „Ofertă de test”). */
+  @media (width < 40rem) {
+    main .head:has(> h1) { @apply flex-wrap gap-2; }
+    main .head:has(> h1) > :not(.btn) { @apply basis-full; }
+    main .head:has(> h1) > :is(.row-actions, span:has(> .btn)) { @apply contents; }
+    main .head:has(> h1) > .spacer { @apply hidden; }
+    main .head:has(> h1) .btn { @apply min-w-0 flex-[1_1_calc(50%-0.25rem)] justify-center whitespace-normal; }
+    main .head:has(> h1) .btn.primary { @apply order-last; }
+    main .head:has(> h1) > h1 { @apply mb-1; }
+    main .head:has(> h1) > .muted { @apply ml-0!; }
+    /* rândul de filtre: căutarea pe tot rândul, listele câte două, la lățimi egale */
+    main .filters { @apply flex flex-wrap gap-2; }
+    main .filters > input:is([type=search], [type=text]) { @apply basis-full; }
+    main .filters > select { @apply w-auto min-w-0 flex-[1_1_calc(50%-0.25rem)]; }
+    /* perechea „De la / până la”: etichetele într-o coloană, câmpurile aliniate și la fel de late (ca în Registru) */
+    main .dates { @apply grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2; }
+    main .dates > label { @apply contents; }
+    main .dates > label > input { @apply w-full min-w-0; }
+    /* comutatoarele scurte (perioade, ordine) încap pe un rând, ca tabsTrigger din ui.js pe telefon */
+    :is(.seg, .vederi, .mt-seg) button { @apply px-1.5 text-xs; }
+    /* până la 4 variante: pe un singur rând, pe toată lățimea, la lățimi egale (ca perioadele din Registru) */
+    :is(.seg, .vederi, .mt-seg):not(:has(> button:nth-of-type(5))) { @apply flex w-full flex-nowrap; }
+    :is(.seg, .vederi, .mt-seg):not(:has(> button:nth-of-type(5))) > button { @apply min-w-0 flex-1 px-1; }
+  }
+
+  /* tabele: capul de tabel estompat, ca în Registru */
+  /* tema-icc-v2 punea „nowrap” pe orice celulă care conține o insignă, așa că textul de lângă insignă ieșea peste coloana
+     vecină (Contracte: „Prestări servicii (Instalcorp Servicii) ICS”). Insigna rămâne întreagă, textul se rupe pe rând nou. */
+  main td:has(> .badge) { @apply whitespace-normal; }
+
+  main th { @apply text-sm font-medium text-muted-foreground normal-case tracking-normal; }
+
+  /* greutăți: dashboardcn nu trece de 600 (semibold); paginile vechi aveau 700–800 pe nume și liste */
+  main :is(b, strong), main td.nr { @apply font-semibold; }
+  main .folders button { @apply font-medium; }
+
+  /* insigne și mesaje: greutatea pieselor noi */
+  .badge { @apply font-medium; }
+  .msg { @apply font-medium; }
+}
+
+
+/* Sarcini: adresele lungi (linkuri) din titlu / note se rup pe rânduri, nu mai lățesc pagina pe telefon */
+@layer components {
+  .task-body, .task-title, .task-notes, .task-meta { overflow-wrap: anywhere; }
+  .tc-chips { @apply flex flex-wrap gap-1; }
+  @media (width < 40rem) { .tasks-card { @apply px-3; } .team-card { @apply min-w-0 p-2.5; } .tc-chip { @apply text-[11px]; } }
+}

@@ -1,0 +1,29 @@
+# Regulile aspectului ICC (cerute de Ion, 07.11.2026)
+
+Valabile în toate aplicațiile Instalcorp. Le aplică `v1/tema.css` + `v1/ui.js` (pagini noi) și `v1/punte.css` (paginile vechi).
+
+## Forme
+1. Orice buton, filtru, insignă sau contor este dreptunghi cu colțuri rotunjite (ca butoanele temei). Nicio „pastilă”.
+   Rotunde rămân doar: punctele de stare, barele de progres, comutatorul pornit/oprit și pastila antetului (care nu e buton).
+2. Comutatoarele (ex. „Produse | Surse de preț”, „Luna aceasta | Luna trecută …”): fundal gri, butonul ales alb și încadrat.
+   Când nu încap, butoanele trec pe rândul următor în același cadru; textul nu se rupe.
+3. Tab-urile cu multe opțiuni (ex. Sarcini) sunt butoane: cel ales albastru, celelalte albe, contorul în dreapta;
+   grupate pe teme, despărțite printr-o linie subțire.
+4. Greutatea textului: maxim semibold (600). Fontul și mărimile sunt ale temei pe toate paginile.
+
+## Telefon ținut vertical (portret)
+5. Butoanele din capul paginii: cele secundare câte două pe rând, lățimi egale; butonul principal (albastru) ultimul, pe toată lățimea.
+6. Datele „De la / până la”: una sub alta, cu etichetele aliniate pe aceeași coloană.
+7. Comutatoarele scurte (până la 4 opțiuni) pe un singur rând, cu bucăți egale.
+8. Filtrele: căutarea pe tot rândul, listele câte două pe rând; una rămasă singură ia tot rândul.
+9. Tabelele late devin compacte, fără derulare laterală: numărul + data + starea într-o coloană, clientul + etichetele în alta, totalul în a treia.
+   Textele care nu încap (ex. „-REV1”) trec pe rândul de dedesubt, mai mici; nu intră peste coloana vecină.
+10. Listele de foldere / tipuri se aleg dintr-o listă derulantă lungă; elementele (ex. șabloanele) apar ca fișe compacte cu butoanele dedesubt.
+11. Linkurile și cuvintele foarte lungi se rup pe rânduri; nimic nu lățește pagina peste ecran.
+
+## Telefon culcat
+12. Se văd cât mai multe coloane, tot fără derulare laterală (varianta `culcat:` din tema.css); vederea de portret nu se schimbă.
+
+## Probă înainte de a-i arăta lui Ion
+13. Fiecare pagină: 4 ecrane (calculator, tabletă, telefon vertical, telefon culcat) × zi/noapte; nimic ieșit din ecran; 0 butoane-pastilă.
+14. Câmpurile de dată au forma celorlalte câmpuri și pe iPhone (Safari).

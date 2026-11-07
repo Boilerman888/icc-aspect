@@ -1,5 +1,12 @@
 # Istoric versiuni
 
+## v1.2.0 – 07.11.2026
+- `punte.css` (nou): aduce paginile vechi ale aplicațiilor Preact (clasele din style.css / tema-icc) la regulile aspectului:
+  butoane și insigne fără „pastile”, comutatoare, greutăți, așezarea pe telefon (butoane egale, date una sub alta, filtre câte două),
+  tab-urile Sarcinilor, linkuri lungi care se rup. Încercată pe Oferte (pilot B).
+- `tema.css`: varianta `culcat:` (telefon ținut culcat); câmpurile de dată pe iPhone au forma celorlalte câmpuri.
+- `REGULI.md` (nou): regulile aspectului, în cuvinte simple.
+
 ## v1.1.3 – 07.11.2026 (reparație)
 - Butoanele din antet (meniul ☰ și comutatorul zi/noapte) au colțuri rotunjite (rounded-md), ca toate butoanele; nicio „pastilă” la butoane.
 
