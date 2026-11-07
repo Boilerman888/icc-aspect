@@ -11,6 +11,7 @@ Tema vine din [dashboardcn](https://github.com/NoahGdev/dashboardcn) (MIT), adap
 |---|---|---|
 | `v1/tema.css` | Jetoanele temei (zi și noapte), fonturile, colțurile, ca `@theme` Tailwind v4 | toate aplicațiile |
 | `v1/ui.js` | Piesele de ecran (buton, card, câmp, listă, tabel, comutator, fereastră, meniu) ca șiruri de clase | Preact și React |
+| `v1/piese.js` | Meniul derulant „Mai multe” | aplicațiile Preact |
 | `v1/antet.js` | Antetul aplicației (bandă → pastilă la derulare, meniu pe telefon, comutator zi/noapte) | aplicațiile Preact |
 
 Noaptea se aprinde cu `data-theme="dark"` pe `<html>` (pus de `tema-icc.js` al fiecărei aplicații) sau cu clasa `.dark`.

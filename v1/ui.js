@@ -5,14 +5,14 @@
 
 export const cx = (...a) => a.filter(Boolean).join(' ');
 
-const BTN_BASE = 'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border border-transparent text-sm font-medium leading-none no-underline transition-[color,box-shadow,background-color] outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50';
+const BTN_BASE = 'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm font-medium leading-none no-underline transition-[color,box-shadow,background-color] outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50';
 const BTN_VAR = {
-  default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
+  default: 'border-transparent bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
   outline: 'border-border bg-background text-foreground shadow-xs hover:bg-accent dark:border-input dark:bg-input/30 dark:hover:bg-input/50',
-  secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-  ghost: 'bg-transparent text-foreground hover:bg-accent',
-  destructive: 'bg-destructive text-white shadow-xs hover:bg-destructive/90',
-  link: 'bg-transparent text-primary underline-offset-4 hover:underline',
+  secondary: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+  ghost: 'border-transparent bg-transparent text-foreground hover:bg-accent',
+  destructive: 'border-transparent bg-destructive text-white shadow-xs hover:bg-destructive/90',
+  link: 'border-transparent bg-transparent text-primary underline-offset-4 hover:underline',
 };
 const BTN_SIZE = {
   default: 'h-9 px-4',
@@ -61,7 +61,31 @@ export const dialog = 'relative grid w-full max-w-lg gap-4 rounded-lg border bor
 export const popover = 'absolute z-50 mt-1 min-w-[12rem] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md';
 export const menuItem = 'flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none hover:bg-accent';
 
+// Regula pentru lățimi: piesele de mai sus au deja o lățime (w-full); o lățime proprie se dă cu „!” la final (ex. w-20!),
+// ca să câștige sigur (fără build de JS nu avem tailwind-merge).
+
 // pagina: lățimea coloanei de conținut (container-page din dashboardcn)
 export const page = 'mx-auto w-full max-w-[1240px] px-4 sm:px-6 lg:px-9';
 export const h1 = 'm-0 text-2xl font-semibold tracking-tight text-foreground sm:text-[28px]';
 export const muted = 'text-muted-foreground';
+
+// câmp cu etichetă deasupra (ui/field.tsx): <label class=${field}>Etichetă<input class=${input} /></label>
+export const field = 'grid min-w-0 content-start gap-2 text-sm leading-none font-medium text-foreground';
+export const fieldHint = 'text-xs leading-snug font-normal text-muted-foreground';
+// câmp mic, pentru tabele cu multe coloane (cantități, prețuri)
+export const inputSm = 'h-8 w-full min-w-0 rounded-md border border-input bg-transparent px-2 py-1 text-sm text-foreground shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-default disabled:opacity-60 dark:bg-input/30';
+export const textarea = 'min-h-16 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base text-foreground shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-60 md:text-sm dark:bg-input/30';
+
+// mesaj în pagină (ui/alert.tsx): info, atenție, eroare, reușită
+const ALERT = {
+  info: 'border-border bg-card text-card-foreground',
+  warn: 'border-amber-500/40 bg-amber-500/8 text-foreground',
+  err: 'border-destructive/40 bg-destructive/8 text-foreground',
+  ok: 'border-emerald-500/40 bg-emerald-500/8 text-foreground',
+};
+export const alert = (tone = 'info') => cx('relative grid w-full gap-1 rounded-lg border px-4 py-3 text-sm leading-relaxed', ALERT[tone] || ALERT.info);
+
+// grupul de acțiuni de pe un rând (butoane care se rup frumos pe telefon)
+export const actions = 'flex flex-wrap items-center gap-2';
+// cutie simplă (aspectul de card, fără așezare): pentru grile și rânduri proprii
+export const panel = 'rounded-xl border border-border bg-card text-card-foreground shadow-sm';
