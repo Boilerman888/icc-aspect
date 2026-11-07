@@ -20,8 +20,9 @@ Noaptea se aprinde cu `data-theme="dark"` pe `<html>` (pus de `tema-icc.js` al f
 
 1. În `package.json` al aplicației, versiunea e fixată pe o etichetă:
    ```json
-   "devDependencies": { "icc-aspect": "github:Boilerman888/icc-aspect#v1.0.0" }
+   "devDependencies": { "icc-aspect": "https://codeload.github.com/Boilerman888/icc-aspect/tar.gz/refs/tags/v1.1.0" }
    ```
+   (arhiva etichetei, cu amprentă în package-lock.json: nu cere git sau chei la publicare).
 2. În CSS-ul de intrare al aplicației (Tailwind v4):
    ```css
    @import "tailwindcss/theme.css" layer(theme);
@@ -29,11 +30,13 @@ Noaptea se aprinde cu `data-theme="dark"` pe `<html>` (pus de `tema-icc.js` al f
    @import "icc-aspect/v1/tema.css";
    ```
    `tema.css` aduce singur în build clasele folosite de `ui.js` și `antet.js`.
-3. Aplicațiile Preact fără build de JS copiază la publicare dosarul `node_modules/icc-aspect/v1` în `aspect/v1` și îl importă:
+3. Aplicațiile Preact fără build de JS copiază dosarul `node_modules/icc-aspect/v1` în `aspect/v1` (pasul `postinstall`: `rm -rf aspect/v1 && mkdir -p aspect && cp -r node_modules/icc-aspect/v1 aspect/v1`), îl publică și îl importă (exemplu complet: `aspect.js` din Oferte):
    ```js
    import { btn, card } from './aspect/v1/ui.js';
    import { creeazaAntet } from './aspect/v1/antet.js';
+   import { creeazaPiese } from './aspect/v1/piese.js';
    const { Antet, ThemeToggle } = creeazaAntet({ html, useState, useEffect });
+   const { Meniu } = creeazaPiese({ html, useState, useEffect, useRef });
    ```
 4. Aplicațiile React (Vite) importă direct: `import { btn } from 'icc-aspect/v1/ui.js'`.
 
