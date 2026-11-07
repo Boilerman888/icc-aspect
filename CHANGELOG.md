@@ -1,5 +1,8 @@
 # Istoric versiuni
 
+## v1.1.2 – 07.11.2026 (reparație)
+- Antetul: marginea de sus a pastilei nu mai împinge pagina în jos (antetul e „flow-root”). Probă: la derulare pagina stă pe loc.
+
 ## v1.1.1 – 07.11.2026 (reparații)
 - Listele native (`select`) noaptea: lista deschisă era albă; acum are culorile temei (`color-scheme` + culori pe `option`).
 - Antetul: înălțime fixă, pastila se micșorează înăuntrul lui, ca în dashboardcn (sticlă, granulație, tranziție 0,7 s).

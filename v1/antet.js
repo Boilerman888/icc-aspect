@@ -40,8 +40,9 @@ function Antet({ brand, home = '#/', links = [], right }) {
   const pill = scrolled && !open;
   // Ca în dashboardcn (site-header-shell): antetul are ÎNĂLȚIME FIXĂ, iar pastila se micșorează ÎNĂUNTRUL lui.
   // Așa pagina de sub el nu se mai mișcă la trecerea bandă ↔ pastilă (în v1.1.0 se mișca și antetul „pâlpâia”).
+  // „flow-root” ține marginea de sus a pastilei (mt-3) înăuntrul antetului; fără el ar împinge pagina în jos.
   return html`
-    <header data-ro data-scrolled=${pill ? 'true' : 'false'} class=${cx('group z-40 w-full px-4 sm:px-6 lg:px-0 print:hidden',
+    <header data-ro data-scrolled=${pill ? 'true' : 'false'} class=${cx('group z-40 flow-root w-full px-4 sm:px-6 lg:px-0 print:hidden',
       'sticky top-0 [@media(max-height:500px)]:static',
       open ? 'h-auto bg-background' : 'h-14 lg:h-16')}>
       <div class=${cx('relative mx-auto flex w-full max-w-[1240px] flex-wrap items-center gap-x-6 gap-y-0 rounded-full border border-transparent px-0 lg:flex-nowrap lg:px-9',
