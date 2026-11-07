@@ -1,5 +1,11 @@
 # Istoric versiuni
 
+## v1.1.1 – 07.11.2026 (reparații)
+- Listele native (`select`) noaptea: lista deschisă era albă; acum are culorile temei (`color-scheme` + culori pe `option`).
+- Antetul: înălțime fixă, pastila se micșorează înăuntrul lui, ca în dashboardcn (sticlă, granulație, tranziție 0,7 s).
+  Înainte pagina se mișca la trecerea bandă ↔ pastilă și antetul „pâlpâia” lângă pragul de 24 px.
+  Pastila are lățimea conținutului de sub ea.
+
 ## v1.1.0 – 07.11.2026
 - `ui.js`: piese noi `field`, `fieldHint`, `inputSm`, `textarea`, `alert(ton)`, `actions`, `panel`, `chevron`.
 - `piese.js` (nou): meniul derulant „Mai multe” pentru Preact (`creeazaPiese`).

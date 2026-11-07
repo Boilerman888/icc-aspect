@@ -1,4 +1,4 @@
-// icc-aspect v1 – antetul aplicațiilor Preact în stilul dashboardcn (site-header-shell): bandă sus, „pastilă” după 24 px de derulare.
+// icc-aspect v1 – antetul aplicațiilor Preact în stilul dashboardcn (site-header-shell): bandă sus, „pastilă” de sticlă după 24 px de derulare.
 // Doar aspect; legăturile și butoanele le dă aplicația. Telefon culcat (înălțime < 500 px): antetul nu mai stă fix,
 // ca să nu ocupe ecranul; meniul deschis se derulează.
 // Folosire (Preact + htm, fără build de JS):
@@ -38,24 +38,32 @@ function Antet({ brand, home = '#/', links = [], right }) {
     return () => removeEventListener('hashchange', f);
   }, []);
   const pill = scrolled && !open;
+  // Ca în dashboardcn (site-header-shell): antetul are ÎNĂLȚIME FIXĂ, iar pastila se micșorează ÎNĂUNTRUL lui.
+  // Așa pagina de sub el nu se mai mișcă la trecerea bandă ↔ pastilă (în v1.1.0 se mișca și antetul „pâlpâia”).
   return html`
-    <header data-ro class=${cx('z-40 w-full transition-[padding] duration-200 print:hidden',
+    <header data-ro data-scrolled=${pill ? 'true' : 'false'} class=${cx('group z-40 w-full px-4 sm:px-6 lg:px-0 print:hidden',
       'sticky top-0 [@media(max-height:500px)]:static',
-      pill ? 'lg:px-4 lg:pt-3 max-lg:border-b max-lg:border-border max-lg:bg-background/90 max-lg:backdrop-blur-md' : open ? 'bg-background' : 'bg-background/90 backdrop-blur-md')}>
-      <div class=${cx('mx-auto flex w-full flex-wrap items-center gap-x-6 gap-y-0 transition-all duration-200',
-        'h-auto min-h-14 px-4 sm:px-6 lg:h-16 lg:flex-nowrap lg:px-9 [@media(max-height:500px)]:min-h-12',
-        'max-w-[1240px]', pill ? 'border-border lg:h-14 lg:rounded-full lg:border lg:bg-background/85 lg:pr-2.5 lg:pl-5 lg:shadow-sm lg:backdrop-blur-md' : '')}>
-        <a href=${home} class="flex shrink-0 items-center gap-2 text-base font-medium tracking-tight whitespace-nowrap text-foreground no-underline">
+      open ? 'h-auto bg-background' : 'h-14 lg:h-16')}>
+      <div class=${cx('relative mx-auto flex w-full max-w-[1240px] flex-wrap items-center gap-x-6 gap-y-0 rounded-full border border-transparent px-0 lg:flex-nowrap lg:px-9',
+        'transition-[max-width,height,margin,padding,background-color,border-color,box-shadow] duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]',
+        open ? 'h-auto min-h-14' : 'h-14 lg:h-16',
+        'group-data-[scrolled=true]:mt-3 group-data-[scrolled=true]:h-11 group-data-[scrolled=true]:px-3 lg:group-data-[scrolled=true]:h-12',
+        'lg:group-data-[scrolled=true]:max-w-[calc(min(1240px,100%)-4.5rem)] lg:group-data-[scrolled=true]:pr-2.5 lg:group-data-[scrolled=true]:pl-5',
+        'group-data-[scrolled=true]:border-[#8f8f8f]/30 group-data-[scrolled=true]:bg-[#d9d9d9]/50 group-data-[scrolled=true]:backdrop-blur-xl group-data-[scrolled=true]:backdrop-saturate-125',
+        'group-data-[scrolled=true]:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.12),0_1px_1px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.10)]',
+        'dark:group-data-[scrolled=true]:border-white/10 dark:group-data-[scrolled=true]:bg-[#2a2a2a]/60')}>
+        <span aria-hidden="true" class="glass-noise pointer-events-none absolute inset-0 rounded-full opacity-0 mix-blend-overlay transition-opacity duration-700 group-data-[scrolled=true]:opacity-100"></span>
+        <a href=${home} class="relative z-10 flex shrink-0 items-center gap-2 text-base font-medium tracking-tight whitespace-nowrap text-foreground no-underline">
           <img class="sigla-dark h-7 w-auto" src="/logo-dark.png" alt="" /><img class="sigla-light h-7 w-auto" src="/logo-light.png" alt="" />
           <span class="lg:max-xl:sr-only">${brand}</span></a>
-        <button type="button" class=${btn('ghost', 'icon', 'ml-auto rounded-full text-lg lg:hidden')} aria-label="Meniu" aria-expanded=${open}
+        <button type="button" class=${btn('ghost', 'icon', 'relative z-10 ml-auto rounded-full text-lg lg:hidden')} aria-label="Meniu" aria-expanded=${open}
           onClick=${() => setOpen(!open)}>${open ? '✕' : '☰'}</button>
-        <nav class=${cx('flex-col max-lg:w-full max-lg:overflow-y-auto max-lg:pb-2 lg:flex lg:flex-row lg:items-center lg:gap-5 xl:gap-7',
+        <nav class=${cx('relative z-10 flex-col max-lg:w-full max-lg:overflow-y-auto max-lg:pb-2 lg:flex lg:flex-row lg:items-center lg:gap-5 xl:gap-7',
           '[@media(max-height:500px)]:max-h-[60vh]', open ? 'flex' : 'hidden')}
           onClick=${(e) => { if (e.target.closest('a')) setOpen(false); }}>
           ${links.map((l) => (l && l.href ? html`<a href=${l.href} class=${navLink(l.on)} aria-current=${l.on ? 'page' : undefined}>${l.label}</a>` : l))}
         </nav>
-        <div class=${cx('items-center gap-2 text-xs font-medium text-muted-foreground lg:ml-auto lg:flex',
+        <div class=${cx('relative z-10 items-center gap-2 text-xs font-medium text-muted-foreground lg:ml-auto lg:flex',
           'max-lg:w-full max-lg:flex-wrap max-lg:py-3', open ? 'flex' : 'hidden')}>${right}</div>
       </div>
     </header>`;
