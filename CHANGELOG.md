@@ -1,5 +1,11 @@
 # Istoric versiuni
 
+## v1.2.3 – 07.11.2026 (reparație)
+- Antetul (regula lui Ion): sigla firmei duce la portal (`portal`, implicit https://apps.instalcorp.ro/), iar numele aplicației,
+  scris în dreapta siglei și vizibil pe toate ecranele, duce la pagina de start (`home`). Clasele `SIGLA_LINK`, `NUME_APP` și adresa `PORTAL`
+  sunt exportate pentru aplicațiile React.
+- REGULI.md: regula antetului și cifrele cardurilor aliniate.
+
 ## v1.2.2 – 07.11.2026 (reparație)
 - `punte.css`: tab-urile „linie” (`.tabs > .tab`) pe telefon stau într-un cadru gri, câte două pe rând; cel ales e alb și încadrat (ca un comutator). Pe calculator rămân la fel.
 

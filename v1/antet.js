@@ -8,6 +8,12 @@
 // Aplicațiile React (Service, Instalații) își fac antetul în React, cu aceleași clase.
 import { cx, btn } from './ui.js';
 
+// Regula antetului (Ion, 07.11.2026): sigla firmei duce la portal, numele aplicației (în dreapta siglei, vizibil și pe telefon)
+// duce la pagina de start a aplicației. Aplicațiile React (Service, Instalații) folosesc aceleași clase.
+export const PORTAL = 'https://apps.instalcorp.ro/';
+export const SIGLA_LINK = 'flex shrink-0 items-center no-underline';
+export const NUME_APP = 'text-base font-semibold tracking-tight whitespace-nowrap text-foreground no-underline hover:text-foreground/80';
+
 export function creeazaAntet({ html, useState, useEffect }) {
 
 function useScrolled(px = 24) {
@@ -26,10 +32,12 @@ const navLink = (on) => cx('inline-flex items-center gap-1.5 whitespace-nowrap r
   on ? 'text-foreground' : 'text-muted-foreground hover:text-foreground');
 
 /**
+ * brand: numele aplicației, scris în dreapta siglei; duce la pagina de start a aplicației (home)
+ * portal: unde duce sigla firmei (implicit portalul apps.instalcorp.ro) – regula lui Ion, v1.2.3
  * links: [{ href, label, on }] sau elemente gata făcute (vnode)
  * right: conținutul din dreapta (utilizator, temă, ieșire)
  */
-function Antet({ brand, home = '#/', links = [], right }) {
+function Antet({ brand, home = '#/', portal = PORTAL, links = [], right }) {
   const [open, setOpen] = useState(false);
   const scrolled = useScrolled();
   useEffect(() => {
@@ -54,9 +62,10 @@ function Antet({ brand, home = '#/', links = [], right }) {
         'group-data-[scrolled=true]:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.12),0_1px_1px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.10)]',
         'dark:group-data-[scrolled=true]:border-white/10 dark:group-data-[scrolled=true]:bg-[#2a2a2a]/60')}>
         <span aria-hidden="true" class="glass-noise pointer-events-none absolute inset-0 rounded-full opacity-0 mix-blend-overlay transition-opacity duration-700 group-data-[scrolled=true]:opacity-100"></span>
-        <a href=${home} class="relative z-10 flex shrink-0 items-center gap-2 text-base font-medium tracking-tight whitespace-nowrap text-foreground no-underline">
-          <img class="sigla-dark h-7 w-auto" src="/logo-dark.png" alt="" /><img class="sigla-light h-7 w-auto" src="/logo-light.png" alt="" />
-          <span class="lg:max-xl:sr-only">${brand}</span></a>
+        <div class="relative z-10 flex shrink-0 items-center gap-2.5">
+          <a href=${portal} class=${SIGLA_LINK} title="Toate aplicațiile Instalcorp" aria-label="Portalul aplicațiilor Instalcorp">
+            <img class="sigla-dark h-7 w-auto" src="/logo-dark.png" alt="" /><img class="sigla-light h-7 w-auto" src="/logo-light.png" alt="" /></a>
+          <a href=${home} class=${NUME_APP}>${brand}</a></div>
         <button type="button" class=${btn('ghost', 'icon', 'relative z-10 ml-auto text-lg lg:hidden')} aria-label="Meniu" aria-expanded=${open}
           onClick=${() => setOpen(!open)}>${open ? '✕' : '☰'}</button>
         <nav class=${cx('relative z-10 flex-col max-lg:w-full max-lg:overflow-y-auto max-lg:pb-2 lg:flex lg:flex-row lg:items-center lg:gap-5 xl:gap-7',

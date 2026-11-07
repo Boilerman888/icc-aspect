@@ -11,6 +11,15 @@ Valabile în toate aplicațiile Instalcorp. Le aplică `v1/tema.css` + `v1/ui.js
    grupate pe teme, despărțite printr-o linie subțire.
 4. Greutatea textului: maxim semibold (600). Fontul și mărimile sunt ale temei pe toate paginile.
 
+## Antetul (Ion, 07.11.2026)
+4a. Sigla firmei (ICC) stă în stânga sus și duce la portalul aplicațiilor (https://apps.instalcorp.ro).
+4b. În dreapta siglei apare numele aplicației, vizibil și pe telefon; un clic pe el duce la pagina de start a aplicației.
+    Preact: `Antet({ brand, home, portal })` din `v1/antet.js`; React: clasele `SIGLA_LINK` și `NUME_APP` din același fișier.
+
+## Cardurile cu cifre
+4c. Într-un rând de carduri, cifrele mari stau la aceeași înălțime, chiar dacă un card are titlul sau nota pe mai multe rânduri
+    (titlul sus, cifra aliniată pe rând, nota dedesubt).
+
 ## Telefon ținut vertical (portret)
 5. Butoanele din capul paginii: cele secundare câte două pe rând, lățimi egale; butonul principal (albastru) ultimul, pe toată lățimea.
 6. Datele „De la / până la”: una sub alta, cu etichetele aliniate pe aceeași coloană.
