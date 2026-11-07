@@ -1,5 +1,9 @@
 # Istoric versiuni
 
+## v1.2.1 – 07.11.2026
+- `clasic.css` (nou): tema ICC v2 („dashboardcn”) pentru clasele vechi (culori, fonturi, câmpuri, liste, carduri, tabele, ferestre),
+  mutată din Oferte (tema/tema-icc-v2.css 2.0.0) ca s-o primească toate aplicațiile Preact. Se importă în stratul `legacy`.
+
 ## v1.2.0 – 07.11.2026
 - `punte.css` (nou): aduce paginile vechi ale aplicațiilor Preact (clasele din style.css / tema-icc) la regulile aspectului:
   butoane și insigne fără „pastile”, comutatoare, greutăți, așezarea pe telefon (butoane egale, date una sub alta, filtre câte două),

@@ -13,6 +13,7 @@ Tema vine din [dashboardcn](https://github.com/NoahGdev/dashboardcn) (MIT), adap
 | `v1/ui.js` | Piesele de ecran (buton, card, câmp, listă, tabel, comutator, fereastră, meniu) ca șiruri de clase | Preact și React |
 | `v1/piese.js` | Meniul derulant „Mai multe” | aplicațiile Preact |
 | `v1/antet.js` | Antetul aplicației (bandă → pastilă la derulare, meniu pe telefon, comutator zi/noapte) | aplicațiile Preact |
+| `v1/clasic.css` | Tema ICC v2 pentru clasele vechi (culori, câmpuri, liste, carduri, tabele, ferestre); se importă în stratul `legacy` | aplicațiile Preact cu stiluri vechi |
 | `v1/punte.css` | Aduce paginile vechi (clasele din style.css / tema-icc) la regulile aspectului; vezi REGULI.md | aplicațiile Preact cu stiluri vechi |
 
 Noaptea se aprinde cu `data-theme="dark"` pe `<html>` (pus de `tema-icc.js` al fiecărei aplicații) sau cu clasa `.dark`.
@@ -21,7 +22,7 @@ Noaptea se aprinde cu `data-theme="dark"` pe `<html>` (pus de `tema-icc.js` al f
 
 1. În `package.json` al aplicației, versiunea e fixată pe o etichetă:
    ```json
-   "devDependencies": { "icc-aspect": "https://codeload.github.com/Boilerman888/icc-aspect/tar.gz/refs/tags/v1.2.0" }
+   "devDependencies": { "icc-aspect": "https://codeload.github.com/Boilerman888/icc-aspect/tar.gz/refs/tags/v1.2.1" }
    ```
    (arhiva etichetei, cu amprentă în package-lock.json: nu cere git sau chei la publicare).
 2. În CSS-ul de intrare al aplicației (Tailwind v4):
@@ -32,7 +33,7 @@ Noaptea se aprinde cu `data-theme="dark"` pe `<html>` (pus de `tema-icc.js` al f
    ```
    `tema.css` aduce singur în build clasele folosite de `ui.js` și `antet.js`.
    Aplicațiile Preact cu stiluri vechi le pun întâi în stratul `legacy` (`@layer legacy, theme, base, components, utilities;`
-   și `@import "./style.css" layer(legacy);`), apoi, după tema.css: `@import "icc-aspect/v1/punte.css";` (exemplu: `app.in.css` din Oferte).
+   și `@import "./style.css" layer(legacy);` și, ultima în acest strat, `@import "icc-aspect/v1/clasic.css" layer(legacy);`), apoi, după tema.css: `@import "icc-aspect/v1/punte.css";` (exemplu: `app.in.css` din Oferte).
 3. Aplicațiile Preact fără build de JS copiază dosarul `node_modules/icc-aspect/v1` în `aspect/v1` (pasul `postinstall`: `rm -rf aspect/v1 && mkdir -p aspect && cp -r node_modules/icc-aspect/v1 aspect/v1`), îl publică și îl importă (exemplu complet: `aspect.js` din Oferte):
    ```js
    import { btn, card } from './aspect/v1/ui.js';

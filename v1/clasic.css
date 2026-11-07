@@ -1,0 +1,550 @@
+/* icc-aspect v1 · clasic.css – tema ICC v2 („dashboardcn”) pentru clasele VECHI ale aplicațiilor Preact (style.css, tema-icc*):
+   culori, fonturi, câmpuri, liste, carduri, tabele, ferestre. Copiată din tema/tema-icc-v2.css 2.0.0 (Oferte, 06.11.2026).
+   Se importă în stratul „legacy”, DUPĂ stilurile vechi ale aplicației:  @import "icc-aspect/v1/clasic.css" layer(legacy);
+   apoi tema.css și punte.css (vezi README). */
+/* Tema ICC v2 („dashboardcn”, după NoahGdev/dashboardcn, MIT) · 2.0.0 · 06.11.2026
+   VERSIUNE FIXĂ: odată publicată nu se mai schimbă; orice corectură înseamnă tema-icc-v3.css.
+   Copiat după sursele repo-ului: apps/web/app/globals.css (culori), components/site-header-shell.tsx și main-nav.tsx (antetul),
+   components/ui/button|input|card|table|tabs|badge|dialog|checkbox.tsx (elementele).
+   Se încarcă ULTIMA. Antetul se transformă în „pastilă” de sticlă la derulare prin tema-icc-v2.js (atributul data-scrolled pe <html>).
+   Documentele tipărite (oferte, contracte) nu se ating. */
+
+
+/* ---------- 1. culorile din globals.css ---------- */
+:root:not(#icc), :root:not(#icc)[data-theme="dark"] {
+  color-scheme: dark;
+  --d-ink: #ededed;
+  --ink: #191919; --ink-2: #212121; --panel: #212121; --panel-2: color-mix(in srgb, var(--d-ink) 6%, var(--panel));
+  --d-secondary: #2e2e2e; --d-muted: color-mix(in srgb, var(--d-ink) 5%, transparent); --d-accent: color-mix(in srgb, var(--d-ink) 6%, transparent);
+  --line: color-mix(in srgb, var(--d-ink) 14%, transparent); --line-2: color-mix(in srgb, var(--d-ink) 16%, transparent);
+  --fg: var(--d-ink); --fg-2: #969696; --fg-3: #969696;
+  --brand: #2f5bff; --brand-bright: #2f5bff; --brand-text: #7d99ff; --brand-deep: #2f5bff; --brand-fg: #ffffff; --accent: #2f5bff;
+  --d-ring: #3ba6f1; --d-destructive: color-mix(in srgb, #fb2c36 90%, #fff);
+  --wip: #fe9a00; --err: #ff6467; --ok: #00bc7d; --info: #3ba6f1; --teal: #00bba7; --gray: #969696;
+  --head-bg: var(--ink);
+  --d-glass-bg: rgba(42, 42, 42, .6); --d-glass-border: rgba(255, 255, 255, .1);
+  --sh-1: 0 1px 2px 0 rgba(0,0,0,.05); --sh-2: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px -1px rgba(0,0,0,.1);
+  --sh-3: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); --sh-4: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1);
+  --grid-op: 0; --glow-op: 0;
+  --input-bg: color-mix(in srgb, var(--d-ink) 4.8%, transparent); --input-border: color-mix(in srgb, var(--d-ink) 16%, transparent);
+  --input-focus-ring: color-mix(in srgb, var(--d-ring) 50%, transparent);
+  --f-sans: "Inter Tight", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: var(--f-sans); /* dashboardcn nu folosește scris monospațiat în interfață; cifrele se aliniază cu tabular-nums */
+  --ease: cubic-bezier(.32, .72, 0, 1);
+}
+:root:not(#icc)[data-theme="light"] {
+  color-scheme: light;
+  --d-ink: #292929;
+  --ink: #ffffff; --ink-2: #f6f6f6; --panel: #ffffff; --panel-2: color-mix(in srgb, var(--d-ink) 5%, #fff);
+  --d-secondary: #e9e9e9; --d-muted: color-mix(in srgb, var(--d-ink) 5%, transparent); --d-accent: color-mix(in srgb, var(--d-ink) 6%, transparent);
+  --line: color-mix(in srgb, var(--d-ink) 12%, transparent); --line-2: color-mix(in srgb, var(--d-ink) 16%, transparent);
+  --fg: var(--d-ink); --fg-2: #6d6d6d; --fg-3: #6d6d6d;
+  --brand: #2f5bff; --brand-bright: #2f5bff; --brand-text: #2f5bff; --brand-deep: #2f5bff; --brand-fg: #ffffff; --accent: #2f5bff;
+  --d-destructive: #fb2c36;
+  --wip: #e17100; --err: #e7000b; --ok: #009966; --info: #155dfc; --teal: #009689; --gray: #6d6d6d;
+  --d-glass-bg: rgba(217, 217, 217, .5); --d-glass-border: rgba(143, 143, 143, .3);
+  --input-bg: transparent; --input-border: color-mix(in srgb, var(--d-ink) 16%, transparent);
+}
+/* familia Oferte / Cash Flow: numele vechi de culori primesc valorile dashboardcn */
+:root:not(#icc) {
+  --navy: var(--brand); --navy-2: var(--brand); --navy-hover: var(--brand);
+  --bg: var(--ink); --card: var(--panel); --card-hover: var(--panel-2); --topbar-bg: var(--ink);
+  --line-light: var(--line); --text: var(--fg); --muted: var(--fg-2); --placeholder: var(--fg-2);
+  --green: var(--ok); --red: var(--err); --amber: var(--wip); --blue: var(--info); --purple: var(--brand);
+  --radius-sm: 8px; --radius: 14px; --radius-lg: 14px; --radius-pill: 9999px;
+  --shadow-sm: var(--sh-2); --shadow-md: var(--sh-2); --shadow-lg: var(--sh-4); --shadow-modal: var(--sh-4);
+  --trans: .15s cubic-bezier(.4, 0, .2, 1);
+  accent-color: var(--brand);
+}
+:root:not(#icc) ::selection { background: color-mix(in srgb, var(--brand) 18%, transparent); color: var(--fg); }
+:root:not(#icc)[data-theme="dark"] ::selection { background: color-mix(in srgb, var(--brand) 30%, transparent); }
+
+/* ---------- 2. fontul și baza (body: bg-background text-foreground; titluri tracking-tight, 500) ---------- */
+html:not(#icc), html:not(#icc) body, :root:not(#icc) button, :root:not(#icc) input, :root:not(#icc) select, :root:not(#icc) textarea { font-family: var(--f-sans); }
+html:not(#icc) { background: var(--ink); }
+html:not(#icc) body { font-variant-numeric: tabular-nums; background: var(--ink); color: var(--fg); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; font-synthesis-weight: none; }
+:root:not(#icc) h1, :root:not(#icc) h2, :root:not(#icc) h3, :root:not(#icc) h4 { font-weight: 500; letter-spacing: -.025em; }
+:root:not(#icc) .c-paper { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; } /* documentele rămân cum erau */
+:root:not(#icc) * { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--fg) 20%, transparent) transparent; }
+:root:not(#icc) a { color: inherit; }
+:root:not(#icc) :focus-visible { outline: none; box-shadow: 0 0 0 3px var(--input-focus-ring); border-color: var(--d-ring); }
+
+/* ---------- 3. efectele vechi: scoase ---------- */
+:root:not(#icc) .icc-grid { display: none; }
+:root:not(#icc) :is(.icc-tur, .tema-btn, .topbar nav a, .topbar .btn, .topbar .theme-toggle, nav.meniu .tab, .side .nav a, .side .who button, .app)::before,
+:root:not(#icc) :is(.icc-tur, .topbar nav a, .topbar .btn, nav.meniu .tab, .side .nav a, .side .who button, .app)::after { display: none; animation: none; content: none; }
+:root:not(#icc) :is(.tema-btn, .theme-toggle, .topbar nav a, .topbar .btn, .app, .btn, .chip, .b-primar, .b-mic, .b-ico, .icon):is(:hover, :focus-visible, :active) { transform: none; filter: none; }
+
+/* ---------- 4. antetul (site-header-shell.tsx): bandă transparentă h-16 → pastilă de sticlă la derulare ---------- */
+:root:not(#icc) :is(header.top, header.topbar, header.bara, header.bar) {
+  position: sticky; top: 0; z-index: 50; box-sizing: border-box; height: 64px; margin: 0 auto; max-width: 100%;
+  background: var(--ink); color: var(--fg); border: 1px solid transparent; border-radius: 0; box-shadow: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  transition: max-width .7s var(--ease), height .7s var(--ease), margin .7s var(--ease), padding .7s var(--ease),
+    background-color .7s var(--ease), border-color .7s var(--ease), box-shadow .7s var(--ease), border-radius .7s var(--ease);
+}
+:root:not(#icc) header.topbar { display: flex; align-items: center; gap: 28px; padding: 0 max(24px, calc((100% - 1240px) / 2)); flex-wrap: nowrap; }
+:root:not(#icc) :is(header.top, header.bara, header.bar) { padding: 0; }
+:root:not(#icc) :is(header.top, header.bara, header.bar) :is(.wrap, .top-in, .bara-in, .bar-in) { height: 100%; min-height: 0; padding-block: 0; display: flex; align-items: center; gap: 28px; flex-wrap: nowrap; }
+/* starea „derulat”: pastila plutitoare (mt-3, h-12, max-w-3xl, rounded-full, sticlă cu blur și umbră interioară) */
+html:not(#icc)[data-scrolled] :is(header.top, header.topbar, header.bara, header.bar):not(.open) {
+  height: 48px; margin: 12px auto 4px; max-width: min(calc(100% - 24px), 1180px); border-radius: 9999px;
+  background: var(--d-glass-bg); border-color: var(--d-glass-border);
+  backdrop-filter: blur(24px) saturate(1.25); -webkit-backdrop-filter: blur(24px) saturate(1.25);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 -1px 0 rgba(255,255,255,.12), 0 1px 1px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.10);
+}
+html:not(#icc)[data-scrolled] header.topbar:not(.open) { padding: 0 10px 0 16px; top: 12px; }
+html:not(#icc)[data-scrolled] :is(header.top, header.bara, header.bar) { top: 12px; }
+html:not(#icc)[data-scrolled] :is(header.top, header.bara, header.bar) :is(.wrap, .top-in, .bara-in, .bar-in) { padding-inline: 16px 10px; max-width: none; }
+/* sigla + numele aplicației (Link: logo size-7 + text-base font-medium tracking-tight) */
+:root:not(#icc) :is(.topbar .brand, .top .logo, .top .brand) { display: flex; align-items: center; gap: 8px; color: var(--fg); font-size: 16px; font-weight: 500; letter-spacing: -.025em; white-space: nowrap; flex: none; }
+:root:not(#icc) :is(.topbar .brand, .top .logo, .top .brand) img { height: 28px; width: auto; }
+:root:not(#icc) .titlu, :root:not(#icc) .brand .nume { color: var(--fg); font-size: 16px; font-weight: 500; letter-spacing: -.025em; }
+:root:not(#icc) .brand .sub { display: none; }
+/* meniul (main-nav.tsx): doar text, gap-7, text-sm font-medium, gri → negru/alb la pagina curentă și la mouse */
+:root:not(#icc) .topbar nav, :root:not(#icc) nav.tabs { display: flex; align-items: center; gap: 28px; margin: 0; flex-wrap: nowrap; }
+:root:not(#icc) .topbar nav a, :root:not(#icc) nav.tabs button {
+  background: none !important; border: 0; border-radius: 0; padding: 0; box-shadow: none !important;
+  color: var(--fg-2); font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: 0; white-space: nowrap;
+  transition: color .15s cubic-bezier(.4, 0, .2, 1);
+}
+:root:not(#icc) .topbar nav a:hover, :root:not(#icc) .topbar nav a.active, :root:not(#icc) nav.tabs button:hover, :root:not(#icc) nav.tabs button[aria-current="true"] { color: var(--fg); }
+:root:not(#icc) .topbar nav a.ext { color: var(--fg-2); }
+:root:not(#icc) .task-w { background: var(--d-secondary); color: var(--fg); border-radius: 9999px; font-size: 12px; font-weight: 500; }
+:root:not(#icc) .task-w.new { background: var(--brand); color: #fff; }
+/* dreapta: gap-2; numele utilizatorului ca text-xs gri; ceasul în Geist Mono */
+:root:not(#icc) .topbar .user, :root:not(#icc) .top .right { margin-left: auto; display: flex; align-items: center; gap: 8px; color: var(--fg-2); font-size: 12px; font-weight: 500; }
+:root:not(#icc) .topbar .who, :root:not(#icc) .top .who { color: var(--fg-2); font-size: 12px; }
+:root:not(#icc) .clock, :root:not(#icc) .ceas { font-family: var(--f-mono); font-size: 12px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+/* butonul de temă (mode-switcher.tsx): ghost, rotund, size-9, iconița soare / lună (lucide) */
+:root:not(#icc) :is(.theme-toggle, .tema-btn) {
+  position: relative; display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 36px; height: 36px; padding: 0; border: 0; border-radius: 9999px; background: transparent; color: var(--fg-2);
+  font-size: 0 !important; box-shadow: none; cursor: pointer; transition: background-color .15s, color .15s;
+}
+:root:not(#icc) :is(.theme-toggle, .tema-btn) .theme-ico { display: none; }
+:root:not(#icc) :is(.theme-toggle, .tema-btn):hover { background: var(--d-accent); color: var(--fg); border: 0; }
+:root:not(#icc) :is(.theme-toggle, .tema-btn)::after {
+  content: "" !important; display: block !important; position: static; inset: auto; width: 16px; height: 16px; padding: 0; opacity: 1 !important; filter: none;
+  background: currentColor !important; animation: none !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+:root:not(#icc)[data-theme="dark"] :is(.theme-toggle, .tema-btn)::after {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'/%3E%3C/svg%3E");
+}
+/* butoanele din antet: „+ Obligație” = butonul principal (pastilă albastră, sm); „Ieșire” = ghost */
+:root:not(#icc) .topbar .btn { height: 32px; padding: 0 12px; border-radius: 9999px; font-size: 14px; font-weight: 500; border: 1px solid transparent; box-shadow: none; }
+:root:not(#icc) .topbar .user > .btn.small { background: transparent; color: var(--fg-2); }
+:root:not(#icc) .topbar .user > .btn.small:hover { background: var(--d-accent); color: var(--fg); }
+:root:not(#icc) .topbar .btn.topadd { background: color-mix(in srgb, var(--brand) 90%, transparent); color: #fff; }
+:root:not(#icc) .topbar .btn.topadd:hover:not(:disabled) { background: var(--brand); color: #fff; }
+:root:not(#icc) .topbar .btn.topadd.in { background: var(--d-secondary); color: var(--fg); }
+:root:not(#icc) .topbar .btn.topadd.in:hover:not(:disabled) { background: color-mix(in srgb, var(--d-secondary) 95%, var(--d-ink)); }
+:root:not(#icc) .linkbtn { color: var(--fg-2); font-size: 12px; }
+:root:not(#icc) .linkbtn:hover { color: var(--fg); }
+:root:not(#icc) .menu-btn { width: 36px; height: 36px; border: 0; border-radius: 9999px; background: transparent; color: var(--fg); font-size: 18px; }
+:root:not(#icc) .menu-btn:hover { background: var(--d-accent); }
+/* laptopuri cu meniu lung (Oferte, Cash Flow): spațiul dintre linkuri scade, numele utilizatorului se ascunde */
+@media (min-width: 1101px) and (max-width: 1500px) {
+  :root:not(#icc) .topbar nav { gap: 20px; }
+  :root:not(#icc) header.topbar { gap: 20px; }
+  :root:not(#icc) .topbar .who { display: none; }
+}
+@media (min-width: 1101px) and (max-width: 1300px) { :root:not(#icc) .topbar nav { gap: 14px; } :root:not(#icc) .topbar .brand { font-size: 0; } }
+@media (max-width: 1100px) {
+  :root:not(#icc) header.topbar { flex-wrap: wrap; height: auto; min-height: 56px; }
+  :root:not(#icc) header.topbar:not(.open) :is(nav, .user) { display: none; }
+  :root:not(#icc) .topbar .menu-btn { display: inline-flex; align-items: center; justify-content: center; margin-left: auto; }
+  :root:not(#icc) .topbar.open .user { display: flex; flex-wrap: wrap; width: 100%; margin: 0; padding: 12px 0; gap: 8px; }
+  :root:not(#icc) header.topbar.open { background: var(--ink); border-radius: 0; }
+  :root:not(#icc) .topbar.open nav { flex-direction: column; align-items: stretch; gap: 0; }
+  :root:not(#icc) .topbar.open nav a { padding: 12px 4px; font-size: 16px; border-bottom: 1px solid var(--line); }
+  :root:not(#icc) .topbar.open .user { border-top: 0; }
+}
+/* antetul cu meniu (Documente) sub 900px: rândul 1 sigla + dreapta, rândul 2 meniul cu derulare orizontală; fără pastilă */
+@media (max-width: 900px) {
+  :root:not(#icc) header.top:has(nav.tabs) { height: auto; }
+  :root:not(#icc) header.top .top-in:has(nav.tabs) { flex-wrap: wrap; row-gap: 0; column-gap: 12px; padding: 8px 16px 0; }
+  :root:not(#icc) header.top .top-in:has(nav.tabs) > .brand { order: 1; height: 44px; }
+  :root:not(#icc) header.top .top-in:has(nav.tabs) > .right { order: 2; margin-left: auto; }
+  :root:not(#icc) header.top .top-in:has(nav.tabs) > nav.tabs { order: 3; flex: 1 0 100%; gap: 20px; height: 44px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  :root:not(#icc) header.top .top-in:has(nav.tabs) > nav.tabs::-webkit-scrollbar { display: none; }
+  html:not(#icc)[data-scrolled] header.top:has(nav.tabs) { height: auto; margin: 0 auto; max-width: 100%; border-radius: 0; top: 0; border-color: transparent transparent var(--line);
+    background: var(--d-glass-bg); box-shadow: none; }
+  html:not(#icc)[data-scrolled] header.top .top-in:has(nav.tabs) { padding: 8px 16px 0; }
+}
+@media (max-width: 720px) {
+  :root:not(#icc) :is(header.top, header.bara, header.bar) :is(.wrap, .top-in, .bara-in, .bar-in) { gap: 12px; }
+  :root:not(#icc) .top .right .ceas, :root:not(#icc) .top .right .clock { display: none; }
+  html:not(#icc)[data-scrolled] header.top { margin: 8px auto 4px; max-width: calc(100% - 16px); top: 8px; }
+}
+
+/* ---------- 5. sigla: forma ICC umplută cu albastrul temei ---------- */
+:root:not(#icc) img.sigla-dark, :root:not(#icc) img.sigla-light {
+  content: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+  background: var(--brand) !important; aspect-ratio: 168 / 88; object-fit: contain; border-radius: 0 !important; padding: 0 !important;
+  -webkit-mask: url("/logo-light.png") center / contain no-repeat; mask: url("/logo-light.png") center / contain no-repeat;
+}
+
+/* ---------- 6. butoane (ui/button.tsx): pastile rotunde, h-9, text-sm font-medium ---------- */
+:root:not(#icc) :is(.btn, .b-mic, .b-ico, .b-pericol, .b-primar) {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; padding: 0 16px;
+  border-radius: 9999px; font-size: 14px; font-weight: 500; line-height: 20px; white-space: nowrap; cursor: pointer;
+  /* outline: border bg-card shadow-xs, hover accent/40 */
+  background: var(--panel); border: 1px solid var(--line); color: var(--fg); box-shadow: var(--sh-1);
+  transition: background-color .15s, color .15s, border-color .15s, box-shadow .15s;
+}
+:root:not(#icc) :is(.btn, .b-mic, .b-ico):hover:not(:disabled) { background: color-mix(in srgb, var(--d-ink) 2.4%, var(--panel)); border-color: var(--line); color: var(--fg); }
+/* default: bg-primary/90 text-white, hover bg-primary */
+:root:not(#icc) :is(.btn.primary, .btn.prim, a.btn.prim, .b-primar, main.wrap .btn:not(.sec)) {
+  background: color-mix(in srgb, var(--brand) 90%, transparent); border-color: transparent; color: #fff; box-shadow: none; font-weight: 500;
+}
+:root:not(#icc) :is(.btn.primary, .btn.prim, a.btn.prim, .b-primar, main.wrap .btn:not(.sec)):hover:not(:disabled) { background: var(--brand); border-color: transparent; color: #fff; }
+:root:not(#icc)[data-theme="dark"] .btn.primary { background: color-mix(in srgb, var(--brand) 90%, transparent); border-color: transparent; box-shadow: none; }
+/* secondary */
+:root:not(#icc) :is(.btn.sec, .btn.slab) { background: var(--d-secondary); border-color: transparent; color: var(--fg); box-shadow: none; }
+:root:not(#icc) :is(.btn.sec, .btn.slab):hover:not(:disabled) { background: color-mix(in srgb, var(--d-secondary) 95%, var(--d-ink)); }
+/* ghost */
+:root:not(#icc) .btn.ghost { background: transparent; border-color: transparent; color: var(--fg-2); box-shadow: none; }
+:root:not(#icc) .btn.ghost:hover:not(:disabled) { background: var(--d-accent); color: var(--fg); }
+/* destructive */
+:root:not(#icc) :is(.btn.danger, .b-pericol) { background: var(--d-destructive); border-color: transparent; color: #fff; box-shadow: none; }
+:root:not(#icc)[data-theme="dark"] :is(.btn.danger, .b-pericol) { background: color-mix(in srgb, var(--d-destructive) 60%, transparent); }
+:root:not(#icc) :is(.btn.danger, .b-pericol):hover:not(:disabled) { background: color-mix(in srgb, var(--d-destructive) 90%, transparent); color: #fff; }
+/* mărimi: sm h-8 px-3, xs h-6 px-2 text-xs; iconițe size-8 rotunde ghost */
+:root:not(#icc) :is(.btn.small, .b-mic, .b-ico) { min-height: 32px; padding: 0 12px; }
+:root:not(#icc) .b-ico.mic { min-height: 24px; padding: 0 8px; font-size: 12px; border-color: transparent; background: transparent; box-shadow: none; }
+:root:not(#icc) .icon { width: 32px; height: 32px; border-radius: 9999px; border: 0; background: transparent; color: var(--fg-2); box-shadow: none; }
+:root:not(#icc) .icon:hover:not(:disabled) { background: var(--d-accent); color: var(--fg); }
+:root:not(#icc) .icon.del:hover:not(:disabled) { background: color-mix(in srgb, var(--d-destructive) 12%, transparent); color: var(--err); }
+:root:not(#icc) :is(.btn, .b-primar, .b-mic, .icon):disabled { opacity: .5; pointer-events: none; }
+:root:not(#icc) :is(.btn, .b-primar, .b-mic, .icon):focus-visible { box-shadow: 0 0 0 3px var(--input-focus-ring); border-color: var(--d-ring); }
+/* .bulk (bara de acțiuni în masă) ca un card plutitor */
+:root:not(#icc) .bulk { background: var(--panel); border: 1px solid var(--line); color: var(--fg); border-radius: 14px; box-shadow: var(--sh-4); }
+
+/* ---------- 7. carduri (ui/card.tsx): rounded-xl border bg-card shadow-sm ---------- */
+:root:not(#icc) :is(.card, .stat, .help-sec, .maint-box, .dash, .ckp, .cpn, .cifra, .termene, .stiva, .app, .pdoc, .an) {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--sh-2); color: var(--fg);
+}
+:root:not(#icc) .app { min-height: 72px; }
+:root:not(#icc) .app.live:hover, :root:not(#icc) .app.live:focus-visible { background: var(--panel); border-color: var(--line-2); box-shadow: var(--sh-3); }
+:root:not(#icc) .ico, :root:not(#icc) .app.live:hover .ico { color: var(--fg); background: var(--d-secondary); border: 0; border-radius: 8px; box-shadow: none; transform: none; }
+:root:not(#icc) .app .nm { font-weight: 500; letter-spacing: -.025em; }
+:root:not(#icc) .app.wip { border-style: solid; }
+:root:not(#icc) .app .dot, :root:not(#icc) .app.wip .dot { box-shadow: none; }
+/* titlul cardului: leading-none font-semibold; descrierea: text-sm muted. Cifrele mari: text-2xl font-semibold tracking-tight tabular-nums */
+:root:not(#icc) :is(.card, .dash) > h2, :root:not(#icc) .card h3 { font-size: 16px; font-weight: 600; letter-spacing: 0; line-height: 1.2; }
+:root:not(#icc) :is(.stat .label, .ckp .l, .eyebrow, .cifra .t, h2.sec) { text-transform: none; letter-spacing: 0; font-family: var(--f-sans); font-size: 14px; font-weight: 400; color: var(--fg-2); }
+:root:not(#icc) :is(.stat .value, .ckp .v, .cifra .n) { font-size: 24px; font-weight: 600; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+:root:not(#icc) :is(.stat .sub, .ckp .s, .cpn .s) { font-size: 12px; color: var(--fg-2); }
+
+/* ---------- 8. câmpuri (ui/input.tsx): h-9 rounded-md border-input bg-transparent shadow-xs; focus inel albastru 3px ---------- */
+:root:not(#icc) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]), select, textarea, .field input, .pachet-cap input) {
+  min-height: 36px; padding: 4px 12px; border-radius: 8px; font-size: 14px; color: var(--fg);
+  background: var(--input-bg); border: 1px solid var(--input-border); box-shadow: var(--sh-1);
+  transition: color .15s, box-shadow .15s, border-color .15s;
+}
+:root:not(#icc) textarea { padding-block: 8px; }
+:root:not(#icc) :is(input, select, textarea)::placeholder { color: var(--fg-2); }
+:root:not(#icc) :is(input, select, textarea):focus, :root:not(#icc) .field input:focus { outline: none; border-color: var(--d-ring); box-shadow: 0 0 0 3px var(--input-focus-ring); }
+:root:not(#icc) :is(input, select, textarea):disabled { opacity: .5; cursor: not-allowed; background: var(--input-bg); }
+:root:not(#icc) :is(input[type=checkbox], input[type=radio]) { width: 16px; height: 16px; min-height: 0; border-radius: 4px; accent-color: var(--brand); box-shadow: none; }
+:root:not(#icc) .field label { font-size: 14px; font-weight: 500; color: var(--fg); }
+:root:not(#icc) .comutator input { background: var(--line-2); border: 0; border-radius: 9999px; min-height: 0; padding: 0; box-shadow: none; }
+:root:not(#icc) .comutator input:checked { background: var(--brand); }
+:root:not(#icc) .comutator input::after { background: #fff; }
+
+/* ---------- 9. tabele (ui/table.tsx): antet h-10 font-medium text-foreground, rânduri cu linie jos și hover muted/50 ---------- */
+:root:not(#icc) table { font-size: 14px; }
+:root:not(#icc) th { height: 40px; padding: 0 8px; background: transparent; color: var(--fg); font-size: 14px; font-weight: 500; text-transform: none; letter-spacing: 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+:root:not(#icc) td { border-bottom: 1px solid var(--line); padding: 8px; }
+:root:not(#icc) tbody tr:last-child td { border-bottom: 0; }
+:root:not(#icc) tbody tr:hover td, :root:not(#icc) table.tbl-plain tr.click:hover td { background: color-mix(in srgb, var(--d-ink) 2.5%, transparent); }
+:root:not(#icc) tfoot td, :root:not(#icc) table.items tfoot td { background: color-mix(in srgb, var(--d-ink) 2.5%, var(--panel)); border-top: 1px solid var(--line); font-weight: 500; }
+:root:not(#icc) table.mini th { height: 32px; font-size: 12px; text-transform: none; color: var(--fg-2); }
+
+/* ---------- 10. taburi și segmente (ui/tabs.tsx): listă bg-muted rounded-lg p-[3px]; activ bg-background shadow-sm ---------- */
+:root:not(#icc) :is(.seg, .vederi, .mt-seg) { display: inline-flex; align-items: center; gap: 0; height: 36px; padding: 3px; background: var(--d-muted); border: 0; border-radius: 10px; overflow: visible; }
+:root:not(#icc) :is(.seg, .vederi, .mt-seg) button { height: 100%; padding: 0 8px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: color-mix(in srgb, var(--fg) 60%, transparent); font-size: 14px; font-weight: 500; box-shadow: none; }
+:root:not(#icc) :is(.seg, .vederi, .mt-seg) button:hover { color: var(--fg); }
+:root:not(#icc) :is(.seg button.on, .vederi button.activ, .mt-seg button.on) { background: var(--ink); color: var(--fg); box-shadow: var(--sh-2); }
+:root:not(#icc)[data-theme="dark"] :is(.seg button.on, .vederi button.activ, .mt-seg button.on) { background: var(--input-bg); border-color: var(--input-border); }
+/* taburi „linie” (Oferte .tab): text, cu bara sub tabul activ */
+:root:not(#icc) .tab { color: var(--fg-2); font-weight: 500; font-size: 14px; border-bottom: 2px solid transparent; }
+:root:not(#icc) .tab:hover { color: var(--fg); }
+:root:not(#icc) .tab.on { color: var(--fg); border-bottom-color: var(--fg); }
+
+/* ---------- 11. insigne (ui/badge.tsx) și filtre: pastile text-xs font-medium ---------- */
+:root:not(#icc) :is(.badge, .pill, .tag, .st) { border-radius: 9999px; padding: 2px 8px; font-size: 12px; font-weight: 500; font-family: var(--f-sans); letter-spacing: 0; text-transform: none; }
+:root:not(#icc) .badge { background: var(--d-secondary); color: var(--fg); }
+/* insigna de status (tabelul din dashboard: Badge variant="outline" cu iconiță colorată): contur fin, text normal, punct în culoarea statusului */
+:root:not(#icc) td:has(> .badge) { white-space: nowrap; }
+:root:not(#icc) .badge:is([class*="st-"], .tpl-badge, .type-badge, .chosen-badge) { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 8px; background: transparent !important; color: var(--fg) !important; border: 1px solid var(--line) !important; box-shadow: none !important; text-decoration: none; opacity: 1; }
+:root:not(#icc) .badge:is([class*="st-"], .tpl-badge, .type-badge, .chosen-badge)::before { content: ""; width: 6px; height: 6px; border-radius: 9999px; background: var(--st, var(--fg-2)); flex: none; }
+:root:not(#icc) :is(.st-gata, .tpl-badge) { --st: #f59e0b; }
+:root:not(#icc) :is(.st-trimisa, .cst-trimis, .type-badge) { --st: var(--brand); }
+:root:not(#icc) :is(.st-acceptata, .cst-semnat, .chosen-badge) { --st: #22c55e; }
+:root:not(#icc) .st-contractata { --st: #14b8a6; }
+:root:not(#icc) .st-executata { --st: #16a34a; }
+:root:not(#icc) :is(.st-refuzata, .cst-anulat) { --st: var(--d-destructive); }
+:root:not(#icc) :is(.st-revizuita, .cst-finalizat) { --st: #a855f7; }
+:root:not(#icc) .badge.st-anulata { color: var(--fg-2) !important; text-decoration: line-through; }
+/* cardurile de cifre (Oferte, Cash Flow): neutre, ca SectionCards din dashboard; doar cifra păstrează culoarea */
+:root:not(#icc) .kpi, :root:not(#icc) .kpi:is(.acc, .ref, .pen) { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--sh-2); }
+:root:not(#icc) .kpi .k-label { font-size: 14px; font-weight: 400; color: var(--fg-2); }
+:root:not(#icc) .kpi .k-val { font-weight: 600; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+/* listele derulante: săgeata chevron-down din lucide, fără săgeata sistemului */
+:root:not(#icc) select:not([multiple]) { -webkit-appearance: none; appearance: none; padding-right: 32px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23969696' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important; background-position: right 10px center !important; background-size: 16px !important; }
+:root:not(#icc) .chip { height: 32px; padding: 0 12px; border-radius: 9999px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); font-size: 14px; font-weight: 500; box-shadow: var(--sh-1); }
+:root:not(#icc) .chip:hover { background: color-mix(in srgb, var(--d-ink) 2.4%, var(--panel)); }
+:root:not(#icc) .chip span { background: var(--d-secondary); color: var(--fg-2); font-weight: 500; }
+:root:not(#icc) :is(.chip.on, .cav, .icon.pm-btn.on) { background: var(--fg); border-color: var(--fg); color: var(--ink); }
+:root:not(#icc) .chip.on span { background: color-mix(in srgb, var(--ink) 20%, transparent); color: var(--ink); }
+
+/* ---------- 12. ferestre (ui/dialog.tsx): fundal negru 50%, conținut rounded-lg border bg-background p-6 shadow-lg ---------- */
+:root:not(#icc) .modal-bg { background: rgba(0, 0, 0, .5); backdrop-filter: none; -webkit-backdrop-filter: none; }
+:root:not(#icc) .modal { background: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 24px; box-shadow: var(--sh-4); }
+:root:not(#icc) .modal h2, :root:not(#icc) .modal h3 { font-size: 18px; font-weight: 600; letter-spacing: 0; }
+
+/* ---------- 13. restul: mesaje, bare, Service, Documente ---------- */
+:root:not(#icc) :is(.msg, .banda-test, .banda-libera) { border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); font-size: 14px; }
+:root:not(#icc) .msg.err { color: var(--err); border-color: color-mix(in srgb, var(--err) 30%, transparent); }
+:root:not(#icc) .msg.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 30%, transparent); }
+:root:not(#icc) :is(.bar i, .bar div, .traseu .linie > i) { background: var(--brand); }
+:root:not(#icc) .bar { background: var(--d-muted); }
+:root:not(#icc) .borna.da .pt { box-shadow: none; background: var(--brand); }
+:root:not(#icc) .b-mic.site b { background: var(--brand); color: #fff; }
+:root:not(#icc) .cifre .total b { color: var(--fg); }
+:root:not(#icc) .data-zi { font-weight: 500; }
+:root:not(#icc) .stiva h3, :root:not(#icc) h2 { text-transform: none; letter-spacing: -.025em; }
+:root:not(#icc) .grila .cap-col { background: var(--panel); color: var(--fg); font-weight: 500; text-transform: capitalize; }
+:root:not(#icc) .maner:hover::after, :root:not(#icc) .maner.activ::after { background: var(--brand); }
+:root:not(#icc) .foot { color: var(--fg-2); font-size: 12px; }
+
+
+/* ---------- 15. comutatoarele (Weekend / Stiva / Hartă): switch shadcn 32×18 ---------- */
+:root:not(#icc) .comutator { gap: 8px; font-size: 14px; font-weight: 500; color: var(--fg); }
+:root:not(#icc) .comutator input { width: 32px !important; height: 18px !important; min-height: 0 !important; padding: 0 !important; border-radius: 9999px !important; border: 1px solid transparent !important; background: var(--line-2) !important; box-shadow: var(--sh-1) !important; }
+:root:not(#icc) .comutator input:checked { background: var(--brand) !important; }
+:root:not(#icc) .comutator input::after { top: 1px; left: 1px; width: 14px; height: 14px; background: #fff; box-shadow: var(--sh-2); }
+:root:not(#icc) .comutator input:checked::after { transform: translateX(14px); }
+
+/* ---------- 16. Service: antetul pe toată lățimea dispecerului, panourile ca Card, programările ca carduri neutre ---------- */
+:root:not(#icc) header.top:has(+ main.plin) .wrap { max-width: none; padding-inline: max(12px, env(safe-area-inset-left, 0px)); }
+html:not(#icc)[data-scrolled] header.top:has(+ main.plin) { max-width: min(calc(100% - 24px), 1180px); }
+:root:not(#icc) :is(.grila-cadru, .harta, .stiva, .coloana, .panou, .sertar, .formular) { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--sh-2); }
+:root:not(#icc) :is(.sertar, .formular) { border-radius: 10px; box-shadow: var(--sh-4); }
+:root:not(#icc) :is(.sertar header, .formular header) { border-bottom: 1px solid var(--line); }
+:root:not(#icc) :is(.sertar h2, .formular h2) { font-size: 18px; font-weight: 600; letter-spacing: -.025em; }
+:root:not(#icc) .formular footer { background: var(--panel); border-top: 1px solid var(--line); }
+:root:not(#icc) .fundal { background: rgba(0, 0, 0, .5); backdrop-filter: none; }
+:root:not(#icc) .grila > * { border-color: var(--line); }
+:root:not(#icc) .grila .cap-col { background: var(--panel); color: var(--fg-2); font-size: 14px; font-weight: 500; height: 40px; padding: 0 12px; text-transform: none; }
+:root:not(#icc) .grila .cap-col:first-letter { text-transform: uppercase; }
+:root:not(#icc) .grila .cap-col.azi { color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--brand); }
+:root:not(#icc) .grila .cap-rand { background: var(--panel); }
+:root:not(#icc) .grila .cap-rand .cap { font-size: 14px; font-weight: 500; }
+:root:not(#icc) .grila .cap-rand.eu { box-shadow: inset 2px 0 0 var(--brand); }
+:root:not(#icc) .celula.azi { background: color-mix(in srgb, var(--brand) 4%, transparent); }
+:root:not(#icc) :is(.contor-zi, .grila .cap-rand.contor, .grila .cap-rand.neal) { font-family: var(--f-sans); font-size: 12px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+/* programarea: Card din temă (contur fin, rounded-lg, shadow-xs), după modelul „dual metric card”:
+   în stânga o bară subțire în culoarea tipului de intervenție, în dreapta o bară din liniuțe (TickBar) = cât din ziua de 8 ore ocupă (plin = lucru, deschis = drum) */
+:root:not(#icc) .cp, :root:not(#icc) .card-p, :root:not(#icc) .card-s {
+  position: relative; background: var(--panel) !important; color: var(--d-ink) !important; border: 1px solid var(--line) !important;
+  border-radius: 10px !important; box-shadow: var(--sh-1); font-size: 12px; line-height: 1.35;
+}
+:root:not(#icc) .cp { padding: 5px 16px 5px 13px !important; }
+:root:not(#icc) .cp .cp-tip { position: absolute; left: 4px; top: 5px; bottom: 5px; width: 3px; border-radius: 9999px; background: var(--m, var(--brand)); }
+:root:not(#icc) .cp .cp-zi { position: absolute; right: 5px; top: 6px; bottom: 6px; width: 4px;
+  background: linear-gradient(to top, var(--brand) 0 var(--l, 0%), color-mix(in srgb, var(--brand) 40%, transparent) var(--l, 0%) var(--ld, 0%), color-mix(in srgb, var(--d-ink) 14%, transparent) var(--ld, 0%) 100%);
+  -webkit-mask: repeating-linear-gradient(to top, #000 0 2px, transparent 2px 4px); mask: repeating-linear-gradient(to top, #000 0 2px, transparent 2px 4px); }
+:root:not(#icc) .cp.stare-anulata .cp-zi { display: none; }
+:root:not(#icc) .cp :is(.cp-2, .cp-3) { color: #6d6d6d; opacity: 1; }
+:root:not(#icc)[data-theme="dark"] .cp :is(.cp-2, .cp-3) { color: #969696; }
+:root:not(#icc) .cp .cp-1 b, :root:not(#icc) .card-p .r1 b { font-size: 13px; font-weight: 500; color: var(--d-ink); }
+:root:not(#icc) .cp:hover { border-color: var(--line-2) !important; box-shadow: var(--sh-2); }
+:root:not(#icc) :is(.cp.hl, .cp.sel) { box-shadow: 0 0 0 2px var(--brand) !important; }
+:root:not(#icc) .cp.hl-client { box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 45%, transparent) !important; }
+:root:not(#icc) .cp :is(.int, .vechime) { background: var(--d-secondary); color: var(--d-ink); border-radius: 9999px; padding: 0 6px; }
+:root:not(#icc) .cp .bifa { border-radius: 4px; border: 1px solid var(--input-border); background: transparent; color: var(--d-ink); }
+:root:not(#icc) .cp .bifa.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+/* etichetele de stare: insigne pastilă text-xs font-medium */
+:root:not(#icc) :is(.et, .eticheta) { font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 9999px; border: 1px solid var(--line); background: var(--panel); color: var(--d-ink); }
+:root:not(#icc) .et:is(.st-in_asteptare, .tarif) { color: var(--wip); border-color: color-mix(in srgb, var(--wip) 35%, transparent); background: color-mix(in srgb, var(--wip) 8%, var(--panel)); }
+:root:not(#icc) .et:is(.st-anulata) { color: var(--err); border-color: color-mix(in srgb, var(--err) 35%, transparent); background: color-mix(in srgb, var(--err) 8%, var(--panel)); }
+:root:not(#icc) .et:is(.st-finalizata, .preluata) { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 35%, transparent); background: color-mix(in srgb, var(--ok) 8%, var(--panel)); }
+:root:not(#icc) .et:is(.st-confirmata_client, .st-inceputa, .piesa, .site) { color: var(--brand-text); border-color: color-mix(in srgb, var(--brand) 35%, transparent); background: color-mix(in srgb, var(--brand) 8%, var(--panel)); }
+/* bara de comenzi: titlul zilei, cifrele, filtrele de stare ca pastile */
+:root:not(#icc) .data-zi { font-size: 18px; font-weight: 600; letter-spacing: -.025em; }
+:root:not(#icc) .cifre { font-size: 14px; color: var(--fg-2); }
+:root:not(#icc) .cifre b { color: var(--fg); font-weight: 600; }
+:root:not(#icc) .filtru { height: 28px; padding: 0 10px; border-radius: 9999px; border: 1px solid var(--line); background: var(--panel); color: var(--fg-2); font-size: 12px; font-weight: 500; box-shadow: var(--sh-1); }
+:root:not(#icc) .filtru:hover { color: var(--fg); }
+:root:not(#icc) .filtru.on { background: var(--fg); border-color: var(--fg); color: var(--ink); }
+:root:not(#icc) .bara-oc { background: var(--d-muted); }
+:root:not(#icc) .bara-oc i { background: var(--brand); }
+:root:not(#icc) .harta-nota { border-radius: 9999px; background: var(--panel); border: 1px solid var(--line); }
+:root:not(#icc) .leaflet-bar { border: 1px solid var(--line) !important; border-radius: 10px !important; box-shadow: var(--sh-2) !important; overflow: hidden; }
+:root:not(#icc) .leaflet-bar a { background: var(--panel) !important; color: var(--fg) !important; border-color: var(--line) !important; }
+:root:not(#icc) .meniu { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--sh-4); padding: 4px; }
+:root:not(#icc) .meniu button { border-radius: 6px; font-size: 14px; }
+:root:not(#icc) .meniu button:hover { background: var(--d-accent); }
+:root:not(#icc) .toast { border-radius: 10px; background: var(--panel); border: 1px solid var(--line); color: var(--fg); box-shadow: var(--sh-4); }
+
+/* ---------- 14. tipărire: sigla originală ---------- */
+@media print {
+  :root:not(#icc) img.sigla-dark, :root:not(#icc) img.sigla-light { content: normal; background: none !important; -webkit-mask: none; mask: none; }
+  html:not(#icc) header.topbar, html:not(#icc) header.top { position: static; }
+}
+
+/* ---------- 17. Service: cardurile din stiva „Fără zi” își iau înălțimea după conținut; grupurile de pe hartă în culoarea temei ---------- */
+:root:not(#icc) .stiva .cp { height: auto !important; min-height: 0; }
+:root:not(#icc) :is(.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large) { background-color: color-mix(in srgb, var(--brand) 22%, transparent) !important; }
+:root:not(#icc) :is(.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large) div { background-color: var(--brand) !important; color: #fff; }
+:root:not(#icc) .marker-cluster span { font: 600 12px/30px var(--f-sans); }
+:root:not(#icc) .leaflet-bar a { font-family: var(--f-sans); }
+:root:not(#icc) .leaflet-control-attribution { background: color-mix(in srgb, var(--panel) 85%, transparent) !important; color: var(--fg-2); font: 11px var(--f-sans); border-radius: 8px 0 0 0; }
+:root:not(#icc) .leaflet-control-attribution a { color: var(--fg-2); }
+
+/* ---------- 18. Oferte: lista cu bife multiple „Toate statusurile” arată ca un câmp (h-9, rounded-md), meniul ca un popover ---------- */
+:root:not(#icc) .msel-btn { min-height: 36px; height: 36px; padding: 0 10px 0 12px; border-radius: 8px; background: var(--input-bg); border: 1px solid var(--input-border); box-shadow: var(--sh-1); font-size: 14px; font-weight: 400; color: var(--fg); gap: 8px; }
+:root:not(#icc) .msel-btn.on { background: color-mix(in srgb, var(--brand) 8%, transparent); border-color: var(--d-ring); color: var(--fg); }
+:root:not(#icc) .msel-car { font-size: 0; width: 16px; height: 16px; background: var(--fg-2);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat; }
+:root:not(#icc) .msel-pop { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--sh-4); padding: 4px; }
+:root:not(#icc) .msel-quick { padding: 6px 6px 8px; margin-bottom: 4px; border-bottom: 1px solid var(--line); }
+:root:not(#icc) .msel-quick button { height: 28px; padding: 0 10px; border-radius: 9999px; border: 1px solid var(--line); background: transparent; color: var(--fg-2); font-size: 12px; font-weight: 500; }
+:root:not(#icc) .msel-quick button.on { background: var(--fg); border-color: var(--fg); color: var(--ink); }
+:root:not(#icc) .filters label.msel-row { border-radius: 6px; padding: 6px 8px; font-size: 14px; }
+:root:not(#icc) .filters label.msel-row:hover { background: var(--d-accent); }
+
+/* ---------- 19. câmpuri și etichete: textul din câmp normal (400), eticheta font-medium (500), ca ui/input și ui/label ---------- */
+:root:not(#icc) :is(input, select, textarea):not(#icc-x) { font-weight: 400; }
+:root:not(#icc) :is(label, .field > span, .lbl, .k-label):not(.chip):not(.msel-row) { font-weight: 500; letter-spacing: 0; text-transform: none; }
+
+/* ---------- 20. Cash Flow: intervalele de scadență ca mini-carduri neutre; „+ Încasare” = buton secundar fără contur ---------- */
+:root:not(#icc) .ag, :root:not(#icc) .ag:is(.r, .a, .b) { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--sh-1); transform: none; }
+:root:not(#icc) .ag:hover { background: color-mix(in srgb, var(--d-ink) 2.4%, var(--panel)); transform: none; }
+:root:not(#icc) .ag .l { font-size: 12px; font-weight: 500; color: var(--fg-2); }
+:root:not(#icc) .ag .v { font-weight: 600; }
+:root:not(#icc) .ag .v small { font-weight: 400; color: var(--fg-2); }
+:root:not(#icc) .topbar .btn.topadd.in { border-color: transparent; box-shadow: none; }
+/* statusurile din Cash Flow: punctul colorat al insignei */
+:root:not(#icc) .st-over { --st: var(--d-destructive); }
+:root:not(#icc) :is(.st-today, .st-disp) { --st: #f59e0b; }
+:root:not(#icc) .st-soon { --st: var(--brand); }
+:root:not(#icc) .st-paid { --st: #22c55e; }
+:root:not(#icc) .st-cec { --st: #a855f7; }
+:root:not(#icc) .badge.st-canc { color: var(--fg-2) !important; text-decoration: line-through; }
+/* etichetele rândurilor din tabel pe telefon (Cash Flow): fără majuscule */
+@media (max-width: 1100px) { :root:not(#icc) .cf-table td::before { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 12px; } }
+
+/* ---------- 21. pastila are exact lățimea conținutului de sub ea (măsurată de tema-icc-v2.js) ---------- */
+@media (min-width: 901px) {
+  html:not(#icc)[data-scrolled][style*="--pill-w"] :is(header.top, header.topbar, header.bara, header.bar):not(.open) {
+    width: var(--pill-w); max-width: var(--pill-w); margin-left: var(--pill-x); margin-right: 0;
+  }
+}
+/* Service și Instalații: fereastră fixă, fără derulare, deci fără pastilă; antetul rămâne bandă */
+html:not(#icc)[data-scrolled] header.top:has(+ main.plin) { width: auto; max-width: 100%; margin: 0; border-radius: 0; top: 0; height: 64px; background: var(--ink); border-color: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+
+/* ---------- 22. Service: fereastră fixă (fără derularea paginii), bara de sus pe un singur rând, aceeași la Zi și la Săptămână ---------- */
+@media (min-width: 1100px) {
+  html:not(#icc):has(main.plin), html:not(#icc):has(main.plin) body { height: 100%; overflow: hidden; }
+  :root:not(#icc) main.plin { height: calc(100vh - 64px); display: flex; flex-direction: column; padding-bottom: 12px; box-sizing: border-box; }
+  :root:not(#icc) main.plin .dispecer { flex: 1 1 auto; height: auto; min-height: 0; }
+  :root:not(#icc) main.plin :is(.stiva, .centru, .grila-cadru) { min-height: 0; overflow: auto; }
+}
+:root:not(#icc) .bara-fixa { flex-wrap: nowrap; gap: 12px; margin-bottom: 12px; min-height: 36px; }
+:root:not(#icc) .bara-fixa .nav-zi { flex: none; gap: 4px; }
+:root:not(#icc) .bara-fixa .data-zi { width: 250px; flex: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 16px; font-weight: 600; letter-spacing: -.025em; }
+:root:not(#icc) .bara-fixa .cifre { flex: none; flex-wrap: nowrap; gap: 12px; font-size: 13px; color: var(--fg-2); white-space: nowrap; }
+:root:not(#icc) .bara-fixa .cifre b { font-weight: 600; color: var(--fg); }
+:root:not(#icc) .bara-fixa .cifre .total b { color: var(--fg); }
+:root:not(#icc) .bara-fixa .comenzi { flex-wrap: nowrap; gap: 6px; margin-left: auto; }
+:root:not(#icc) .bara-fixa .comutator.inactiv { opacity: .45; }
+@media (max-width: 1750px) { :root:not(#icc) .bara-fixa .cifre span:not(.total) { display: none; } :root:not(#icc) .bara-fixa .cifre .total { border: 0; padding: 0; } }
+@media (max-width: 1450px) { :root:not(#icc) .bara-fixa .cifre { display: none; } }
+@media (max-width: 1300px) { :root:not(#icc) .bara-fixa .b-comut span { display: none; } :root:not(#icc) .bara-fixa .data-zi { width: 210px; font-size: 15px; } }
+@media (max-width: 1099px) { :root:not(#icc) .bara-fixa { flex-wrap: wrap; } }
+/* comutatoarele de panou (Toggle din shadcn, varianta outline, sm): iconiță lucide + text; pornit = fundal accent și iconiță albastră */
+:root:not(#icc) .b-comut { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; flex: none; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--fg-2); font: 500 13px var(--f-sans); cursor: pointer; transition: background-color .15s, color .15s, border-color .15s; }
+:root:not(#icc) .b-comut:hover { background: var(--d-accent); color: var(--fg); }
+:root:not(#icc) .b-comut.on { background: var(--d-secondary); border-color: transparent; color: var(--fg); }
+:root:not(#icc) .b-comut.on .ico { background: var(--brand); }
+:root:not(#icc) .ico { display: inline-block; width: 16px; height: 16px; flex: none; background: currentColor; -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat; }
+:root:not(#icc) .ico-stiva { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Cpath d='M9 3v18'/%3E%3C/svg%3E"); }
+:root:not(#icc) .ico-harta { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z'/%3E%3Cpath d='M15 5.764v15'/%3E%3Cpath d='M9 3.236v15'/%3E%3C/svg%3E"); }
+:root:not(#icc) .ico-jos { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); color: var(--fg-2); }
+/* lista „Stări” (DropdownMenu cu bife) */
+:root:not(#icc) .stari-lista { position: relative; }
+:root:not(#icc) .stari-btn { display: inline-flex; align-items: center; gap: 6px; }
+:root:not(#icc) .stari-btn b { background: var(--brand); color: #fff; border-radius: 9999px; min-width: 18px; height: 18px; display: inline-grid; place-items: center; font-size: 11px; font-weight: 600; }
+:root:not(#icc) .fundal-stari { position: fixed; inset: 0; z-index: 60; }
+:root:not(#icc) .stari-pop { position: absolute; z-index: 61; top: calc(100% + 6px); left: 0; min-width: 220px; padding: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--sh-4); display: grid; }
+:root:not(#icc) .stari-rand { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; font-size: 14px; font-weight: 400; color: var(--fg); cursor: pointer; }
+:root:not(#icc) .stari-rand:hover { background: var(--d-accent); }
+:root:not(#icc) .stari-rand .punct { width: 8px; height: 8px; border-radius: 9999px; background: var(--s, var(--fg-2)); }
+:root:not(#icc) .stari-pop .linkbtn { justify-self: start; margin: 4px 8px 4px; }
+/* stările programărilor din Service: același punct colorat în lista „Stări” și pe insignele din carduri */
+:root:not(#icc) :is(.punct, .et).st-in_asteptare { --s: #f59e0b; }
+:root:not(#icc) :is(.punct, .et).st-confirmata_client { --s: var(--brand); }
+:root:not(#icc) :is(.punct, .et).st-activa { --s: #14b8a6; }
+:root:not(#icc) :is(.punct, .et).st-inceputa { --s: #a855f7; }
+:root:not(#icc) :is(.punct, .et).st-finalizata { --s: #22c55e; }
+:root:not(#icc) :is(.punct, .et).st-anulata { --s: var(--fg-2); }
+:root:not(#icc) .cp .et[class*="st-"] { display: inline-flex; align-items: center; gap: 4px; background: transparent !important; color: var(--fg) !important; border: 1px solid var(--line) !important; border-radius: 9999px; padding: 0 6px; font-size: 11px; font-weight: 500; line-height: 16px; }
+:root:not(#icc) .cp .et[class*="st-"]::before { content: ""; width: 6px; height: 6px; border-radius: 9999px; background: var(--s); }
+
+:root:not(#icc) .ico-reset { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3C/svg%3E"); }
+:root:not(#icc) .bara-fixa .b-fantoma { border: 0 !important; background: transparent !important; box-shadow: none !important; color: var(--fg-2); width: 32px; height: 32px; }
+:root:not(#icc) .bara-fixa .b-fantoma:hover { background: var(--d-accent) !important; color: var(--fg); }
+:root:not(#icc) .bara-fixa :is(.b-mic, .b-primar) { height: 32px; padding: 0 12px; font-size: 13px; }
+/* pe vederea Săptămână cardurile sunt înguste: starea rămâne doar ca punct colorat (textul e în fereastra de la trecerea mouse-ului) */
+:root:not(#icc) .grila.multe-zile .cp .et[class*="st-"] { font-size: 0; padding: 0; border: 0 !important; gap: 0; }
+
+/* ---------- 23. graficele (Oferte, Cash Flow) în culorile graficelor din dashboardcn (--chart-1…5 din globals.css) ----------
+   Cash Flow citește culorile din variabile și le adaugă transparență în cod: valorile rămân hex (#rrggbb). */
+:root:not(#icc)[data-theme="light"], :root:not(#icc):not([data-theme]) {
+  --s-a: #2f5bff; --s-b: #0d9488; --grid: #ececec; --tick: #6d6d6d;
+  --green: #059669; --red: #e11d48; --amber: #d97706; --purple: #9333ea;
+  --ch-1: #2f5bff; --ch-ok: #10b981; --ch-err: #f43f5e; --ch-mut: #d4d4d4;
+  --ch-2: #0d9488; --ch-3: #164e63; --ch-4: #f59e0b; --ch-5: #7c3aed; --ch-6: #0f766e; --ch-7: #a3a3a3;
+}
+:root:not(#icc)[data-theme="dark"] {
+  --s-a: #4f75ff; --s-b: #10b981; --grid: #2e2e2e; --tick: #969696;
+  --green: #10b981; --red: #f43f5e; --amber: #f59e0b; --purple: #a855f7;
+  --ch-1: #4f75ff; --ch-ok: #10b981; --ch-err: #f43f5e; --ch-mut: #4a4a4a;
+  --ch-2: #10b981; --ch-3: #f59e0b; --ch-4: #a855f7; --ch-5: #f43f5e; --ch-6: #14b8a6; --ch-7: #737373;
+}
+:root:not(#icc) .donut-pista { stroke: color-mix(in srgb, var(--d-ink) 8%, transparent); }
+:root:not(#icc) .donut-seg { transition: stroke-dasharray .6s var(--ease); }
+:root:not(#icc) .donut-big { font-size: 26px; font-weight: 600; letter-spacing: -.03em; fill: var(--fg); font-family: var(--f-sans); }
+:root:not(#icc) .donut-sub { font-size: 11px; font-weight: 400; fill: var(--fg-2); font-family: var(--f-sans); }
+:root:not(#icc) .legend { font-size: 14px; font-weight: 400; gap: 10px; }
+:root:not(#icc) .legend i { width: 10px; height: 10px; border-radius: 2px; }
+:root:not(#icc) .legend b { font-weight: 500; }
+:root:not(#icc) :is(.lg, .chart-legend) { font-size: 12px; font-weight: 400; color: var(--fg-2); }
+:root:not(#icc) .lg i { width: 10px; height: 10px; border-radius: 2px; }
+/* fereastra de la trecerea mouse-ului (ChartTooltipContent): rounded-lg, contur, text-xs, indicator pătrat 2.5 */
+:root:not(#icc) .cf-tip { background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--sh-4); padding: 6px 10px; font-size: 12px; min-width: 150px; }
+:root:not(#icc) .cf-tip .t { font-size: 12px; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--fg); margin-bottom: 4px; }
+:root:not(#icc) .cf-tip .r { font-weight: 400; color: var(--fg-2); }
+:root:not(#icc) .cf-tip .r b, :root:not(#icc) .cf-tip .r span:last-child { font-weight: 500; color: var(--fg); font-variant-numeric: tabular-nums; }
+:root:not(#icc) .cf-tip .r i { width: 10px; height: 10px; border-radius: 2px; }
+:root:not(#icc) .frow .bar div { background: var(--s-a); }
+:root:not(#icc) .bar div { background: var(--s-a); }
+
+/* ---------- 24. scara de mărimi a textului (folosită și de stilurile scrise direct în aplicații) ---------- */
+:root:not(#icc) { --t-xs: 11px; --t-sm: 12px; --t-md: 13px; --t-lg: 15px; --t-xl: 18px; --t-2xl: 20px; }
+
+/* ---------- 25. telefon: comutatoarele de perioadă pe un singur rând, derulabile ---------- */
+@media (max-width: 600px) {
+  :root:not(#icc) :is(.seg, .vederi, .mt-seg) { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  :root:not(#icc) :is(.seg, .vederi, .mt-seg) button { white-space: nowrap; flex: none; font-size: 13px; padding: 0 10px; }
+}
