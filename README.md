@@ -22,7 +22,7 @@ Noaptea se aprinde cu `data-theme="dark"` pe `<html>` (pus de `tema-icc.js` al f
 
 1. În `package.json` al aplicației, versiunea e fixată pe o etichetă:
    ```json
-   "devDependencies": { "icc-aspect": "https://codeload.github.com/Boilerman888/icc-aspect/tar.gz/refs/tags/v1.2.1" }
+   "devDependencies": { "icc-aspect": "https://codeload.github.com/Boilerman888/icc-aspect/tar.gz/refs/tags/v1.2.2" }
    ```
    (arhiva etichetei, cu amprentă în package-lock.json: nu cere git sau chei la publicare).
 2. În CSS-ul de intrare al aplicației (Tailwind v4):

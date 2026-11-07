@@ -1,5 +1,8 @@
 # Istoric versiuni
 
+## v1.2.2 – 07.11.2026 (reparație)
+- `punte.css`: tab-urile „linie” (`.tabs > .tab`) pe telefon stau într-un cadru gri, câte două pe rând; cel ales e alb și încadrat (ca un comutator). Pe calculator rămân la fel.
+
 ## v1.2.1 – 07.11.2026
 - `clasic.css` (nou): tema ICC v2 („dashboardcn”) pentru clasele vechi (culori, fonturi, câmpuri, liste, carduri, tabele, ferestre),
   mutată din Oferte (tema/tema-icc-v2.css 2.0.0) ca s-o primească toate aplicațiile Preact. Se importă în stratul `legacy`.

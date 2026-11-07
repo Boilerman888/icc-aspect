@@ -97,3 +97,12 @@
   .tc-chips { @apply flex flex-wrap gap-1; }
   @media (width < 40rem) { .tasks-card { @apply px-3; } .team-card { @apply min-w-0 p-2.5; } .tc-chip { @apply text-[11px]; } }
 }
+
+/* Tab-urile „linie” (.tabs > .tab) pe telefon: cadru gri, câte două pe rând, cel ales alb și încadrat (ca un comutator), v1.2.2 */
+@layer components {
+  @media (width < 40rem) {
+    .tabs { @apply grid grid-cols-2 gap-1 rounded-lg border-0 bg-muted p-[3px]; }
+    .tabs > .tab { @apply m-0 flex h-8 min-w-0 items-center justify-center rounded-md border-0 px-2 text-sm font-medium whitespace-nowrap text-foreground/60 no-underline dark:text-muted-foreground; }
+    .tabs > .tab.on { @apply bg-background text-foreground shadow-sm dark:bg-input/30 dark:text-foreground; }
+  }
+}
