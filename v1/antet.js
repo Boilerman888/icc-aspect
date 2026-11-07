@@ -57,7 +57,7 @@ function Antet({ brand, home = '#/', links = [], right }) {
         <a href=${home} class="relative z-10 flex shrink-0 items-center gap-2 text-base font-medium tracking-tight whitespace-nowrap text-foreground no-underline">
           <img class="sigla-dark h-7 w-auto" src="/logo-dark.png" alt="" /><img class="sigla-light h-7 w-auto" src="/logo-light.png" alt="" />
           <span class="lg:max-xl:sr-only">${brand}</span></a>
-        <button type="button" class=${btn('ghost', 'icon', 'relative z-10 ml-auto rounded-full text-lg lg:hidden')} aria-label="Meniu" aria-expanded=${open}
+        <button type="button" class=${btn('ghost', 'icon', 'relative z-10 ml-auto text-lg lg:hidden')} aria-label="Meniu" aria-expanded=${open}
           onClick=${() => setOpen(!open)}>${open ? '✕' : '☰'}</button>
         <nav class=${cx('relative z-10 flex-col max-lg:w-full max-lg:overflow-y-auto max-lg:pb-2 lg:flex lg:flex-row lg:items-center lg:gap-5 xl:gap-7',
           '[@media(max-height:500px)]:max-h-[60vh]', open ? 'flex' : 'hidden')}
@@ -79,7 +79,7 @@ function ThemeToggle() {
     return () => removeEventListener('icc-tema', f);
   }, []);
   const lbl = t === 'dark' ? 'Temă luminoasă' : 'Temă întunecată';
-  return html`<button type="button" data-ro class=${btn('ghost', 'icon-sm', 'rounded-full')} aria-label=${lbl} title=${lbl}
+  return html`<button type="button" data-ro class=${btn('ghost', 'icon-sm')} aria-label=${lbl} title=${lbl}
     onClick=${() => setT(window.iccTema ? window.iccTema.comuta() : t)}>
     <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       ${t === 'dark'

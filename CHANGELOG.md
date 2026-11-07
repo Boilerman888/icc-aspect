@@ -1,5 +1,8 @@
 # Istoric versiuni
 
+## v1.1.3 – 07.11.2026 (reparație)
+- Butoanele din antet (meniul ☰ și comutatorul zi/noapte) au colțuri rotunjite (rounded-md), ca toate butoanele; nicio „pastilă” la butoane.
+
 ## v1.1.2 – 07.11.2026 (reparație)
 - Antetul: marginea de sus a pastilei nu mai împinge pagina în jos (antetul e „flow-root”). Probă: la derulare pagina stă pe loc.
 
