@@ -15,6 +15,10 @@ Valabile în toate aplicațiile Instalcorp. Le aplică `v1/tema.css` + `v1/ui.js
 4a. Sigla firmei (ICC) stă în stânga sus și duce la portalul aplicațiilor (https://apps.instalcorp.ro).
 4b. În dreapta siglei apare numele aplicației, vizibil și pe telefon; un clic pe el duce la pagina de start a aplicației.
     Preact: `Antet({ brand, home, portal })` din `v1/antet.js`; React: clasele `SIGLA_LINK` și `NUME_APP` din același fișier.
+4d. Bara compactă (Ion, 08.11.2026): numele aplicației stă într-un card lângă siglă; săgeata din card deschide lista aplicațiilor tale
+    (fără legături spre alte aplicații în bară). În bară stau doar paginile de lucru ale aplicației. În dreapta: sarcinile (iconiță cu contor),
+    comutatorul zi/noapte și cercul cu inițiale; ajutorul, setările, versiunea și ieșirea sunt în meniul cercului, în aceeași ordine peste tot.
+    Piese: `<icc-aplicatie>` și `<icc-utilizator>` din `v1/cont.js`; în Preact prin `Antet({ cod, sb, cont })`.
 
 ## Cardurile cu cifre
 4c. Într-un rând de carduri, cifrele mari stau la aceeași înălțime, chiar dacă un card are titlul sau nota pe mai multe rânduri

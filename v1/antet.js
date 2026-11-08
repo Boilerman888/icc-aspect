@@ -7,6 +7,7 @@
 //   const { Antet, ThemeToggle, navLink } = creeazaAntet({ html, useState, useEffect });
 // Aplicațiile React (Service, Instalații) își fac antetul în React, cu aceleași clase.
 import { cx, btn } from './ui.js';
+import './cont.js'; // <icc-aplicatie> și <icc-utilizator> (v1.3.0)
 
 // Regula antetului (Ion, 07.11.2026): sigla firmei duce la portal, numele aplicației (în dreapta siglei, vizibil și pe telefon)
 // duce la pagina de start a aplicației. Aplicațiile React (Service, Instalații) folosesc aceleași clase.
@@ -35,9 +36,11 @@ const navLink = (on) => cx('inline-flex items-center gap-1.5 whitespace-nowrap r
  * brand: numele aplicației, scris în dreapta siglei; duce la pagina de start a aplicației (home)
  * portal: unde duce sigla firmei (implicit portalul apps.instalcorp.ro) – regula lui Ion, v1.2.3
  * links: [{ href, label, on }] sau elemente gata făcute (vnode)
- * right: conținutul din dreapta (utilizator, temă, ieșire)
+ * right: conținutul din dreapta (utilizator, temă, ieșire) – forma veche, ascuns pe telefon până la ☰
+ * v1.3.0 (Ion, 08.11.2026): cod + sb (sau aplicatii) → numele aplicației devine cardul <icc-aplicatie> cu lista aplicațiilor tale;
+ *   cont → sarcinile, zi/noapte și <icc-utilizator>, mereu la vedere (și pe telefon, lângă ☰)
  */
-function Antet({ brand, home = '#/', portal = PORTAL, links = [], right }) {
+function Antet({ brand, home = '#/', portal = PORTAL, links = [], right, cod, sb, aplicatii, cont }) {
   const [open, setOpen] = useState(false);
   const scrolled = useScrolled();
   useEffect(() => {
@@ -65,15 +68,17 @@ function Antet({ brand, home = '#/', portal = PORTAL, links = [], right }) {
         <div class="relative z-10 flex shrink-0 items-center gap-2.5">
           <a href=${portal} class=${SIGLA_LINK} title="Toate aplicațiile Instalcorp" aria-label="Portalul aplicațiilor Instalcorp">
             <img class="sigla-dark h-7 w-auto" src="/logo-dark.png" alt="" /><img class="sigla-light h-7 w-auto" src="/logo-light.png" alt="" /></a>
-          <a href=${home} class=${NUME_APP}>${brand}</a></div>
-        <button type="button" class=${btn('ghost', 'icon', 'relative z-10 ml-auto text-lg lg:hidden')} aria-label="Meniu" aria-expanded=${open}
+          ${cod ? html`<icc-aplicatie nume=${brand} acasa=${home} cod=${cod} sb=${sb} aplicatii=${aplicatii}></icc-aplicatie>`
+            : html`<a href=${home} class=${NUME_APP}>${brand}</a>`}</div>
+        ${cont && html`<div class="relative z-10 order-2 ml-auto flex items-center gap-1.5 lg:order-3 lg:ml-0 [&_*]:shrink-0">${cont}</div>`}
+        <button type="button" class=${btn('ghost', 'icon', cx('relative z-10 order-3 text-lg lg:hidden', !cont && 'ml-auto'))} aria-label="Meniu" aria-expanded=${open}
           onClick=${() => setOpen(!open)}>${open ? '✕' : '☰'}</button>
-        <nav class=${cx('relative z-10 flex-col max-lg:w-full max-lg:overflow-y-auto max-lg:pb-2 lg:flex lg:flex-row lg:items-center lg:gap-5 xl:gap-7',
+        <nav class=${cx('relative z-10 order-4 flex-col max-lg:w-full max-lg:overflow-y-auto max-lg:pb-2 lg:order-2 lg:flex lg:flex-row lg:items-center lg:gap-5 xl:gap-7', cont && 'lg:mr-auto',
           '[@media(max-height:500px)]:max-h-[60vh]', open ? 'flex' : 'hidden')}
           onClick=${(e) => { if (e.target.closest('a')) setOpen(false); }}>
           ${links.map((l) => (l && l.href ? html`<a href=${l.href} class=${navLink(l.on)} aria-current=${l.on ? 'page' : undefined}>${l.label}</a>` : l))}
         </nav>
-        <div class=${cx('relative z-10 items-center gap-2 text-xs font-medium text-muted-foreground lg:ml-auto lg:flex',
+        <div class=${cx('relative z-10 order-5 items-center gap-2 text-xs font-medium text-muted-foreground lg:order-3 lg:ml-auto lg:flex',
           'max-lg:w-full max-lg:flex-wrap max-lg:py-3', open ? 'flex' : 'hidden')}>${right}</div>
       </div>
     </header>`;
