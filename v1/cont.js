@@ -7,7 +7,7 @@
 // <icc-aplicatie nume="Oferte" acasa="#/registru" cod="oferte" [sigla-luminoasa="/logo-light.png" sigla-intunecata="/logo-dark.png"]>
 //   proprietăți: .sb = clientul Supabase (lista vine din portal.eu(), la prima deschidere) sau .aplicatii = [{ cod, nume, url, acces, stare }]
 // <icc-utilizator nume="Ion Zaifu" detaliu="ion@… · Admin" versiune="Oferte 2.4">
-//   proprietăți: .elemente = [{ label, href, onClick, nou }] (null-urile se sar), .onIesi = () => …   (sau evenimentul „iesire”)
+//   proprietăți: .elemente = [{ label, href, onClick, nou } sau { titlu }] (null-urile se sar), .onIesi = () => …   (sau evenimentul „iesire”)
 import { cx, popover, menuItem } from './ui.js';
 
 const PORTAL = 'https://apps.instalcorp.ro/';
@@ -126,6 +126,7 @@ class IccUtilizator extends Derulant {
     m.append(cap, el('div', '-mx-1 my-1 h-px bg-border'));
     const lista = this.elemente.filter(Boolean);
     for (const x of lista) {
+      if (x.titlu) { m.append(el('div', 'px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground', x.titlu)); continue; }   // v1.4.0: titlu de grup
       const cls = cx(menuItem, 'no-underline text-popover-foreground border-0 bg-transparent text-left');
       const i = x.href ? el('a', cls) : el('button', cls);
       if (x.href) i.href = x.href; else i.type = 'button';

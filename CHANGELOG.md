@@ -1,5 +1,11 @@
 # Istoric versiuni
 
+## v1.4.0 – 08.11.2026
+- `Antet`: o legătură din bară poate avea sub-pagini (`{ label, sub: [{ href, label, nota, on }] }`): pe calculator se deschide
+  o listă la clic (cu explicația scurtă sub fiecare nume), pe telefon apar la vedere în meniul ☰, sub un titlu mic.
+  Pentru OPS (ISCIR ▾, ANRE ▾), cerut de Ion pe 08.11: meniul trece sus, ca în celelalte aplicații.
+- `<icc-utilizator>`: un element `{ titlu }` pune un titlu mic de grup în meniul cercului (ex. „Configurări”).
+
 ## v1.3.0 – 08.11.2026
 - `cont.js` (nou): două elemente HTML proprii, aceleași în Preact, JavaScript simplu și React (cerute de Ion pe 08.11):
   `<icc-aplicatie>` = sigla firmei, care la clic deschide lista aplicațiilor la care omul are acces (din portal, `portal.eu()`),
