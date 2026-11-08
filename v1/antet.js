@@ -32,10 +32,35 @@ function useScrolled(px = 24) {
   return s;
 }
 
+// v1.4.0: o legătură cu sub-pagini în bară ({ label, sub: [{ href, label, nota, on }] }): pe calculator listă la clic
+// (se închide la clic în afară, Esc sau alegere), pe telefon titlu mic + sub-paginile la vedere, în meniul ☰
+function Grup({ l }) {
+  const [o, setO] = useState(false);
+  const h = useState(() => ({ el: null }))[0];
+  useEffect(() => {
+    if (!o) return;
+    const afara = (e) => { if (h.el && !h.el.contains(e.target)) setO(false); };
+    const esc = (e) => { if (e.key === 'Escape') setO(false); };
+    document.addEventListener('pointerdown', afara); document.addEventListener('keydown', esc); addEventListener('hashchange', esc);
+    return () => { document.removeEventListener('pointerdown', afara); document.removeEventListener('keydown', esc); removeEventListener('hashchange', esc); };
+  }, [o]);
+  const on = l.on || l.sub.some((s) => s && s.on);
+  return html`<div class="relative max-lg:flex max-lg:flex-col" ref=${(e) => { h.el = e; }}>
+    <button type="button" aria-haspopup="menu" aria-expanded=${o} onClick=${() => setO(!o)}
+      class=${cx(navLink(on), 'cursor-pointer border-0 bg-transparent p-0 max-lg:pointer-events-none max-lg:min-h-0 max-lg:border-0 max-lg:pt-4 max-lg:pb-1 max-lg:text-xs max-lg:text-muted-foreground')}>
+      ${l.label}<svg viewBox="0 0 24 24" class=${cx('size-3.5 transition-transform max-lg:hidden', o && 'rotate-180')} fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></button>
+    <div role="menu" onClick=${(e) => { if (e.target.closest('a')) setO(false); }}
+      class=${cx('flex flex-col max-lg:pl-3 lg:absolute lg:top-full lg:left-0 lg:z-50 lg:mt-2 lg:w-72 lg:rounded-md lg:border lg:border-border lg:bg-popover lg:p-1 lg:shadow-md', !o && 'lg:hidden')}>
+      ${l.sub.filter(Boolean).map((s) => html`<a href=${s.href} role="menuitem" target=${s.ext ? '_blank' : undefined} rel=${s.ext ? 'noopener' : undefined}
+        class=${cx(navLink(s.on), 'lg:flex lg:flex-col lg:items-start lg:gap-0 lg:rounded-sm lg:px-2 lg:py-1.5 lg:text-popover-foreground lg:hover:bg-accent', s.on && 'lg:bg-accent')}>
+        <span>${s.label}</span>${s.nota && html`<small class="hidden text-xs font-normal text-muted-foreground lg:block">${s.nota}</small>`}</a>`)}
+    </div></div>`;
+}
+
 /**
  * brand: numele aplicației, scris în dreapta siglei; duce la pagina de start a aplicației (home)
  * portal: unde duce sigla firmei (implicit portalul apps.instalcorp.ro) – regula lui Ion, v1.2.3
- * links: [{ href, label, on }] sau elemente gata făcute (vnode)
+ * links: [{ href, label, on }], [{ label, sub: [...] }] (listă, v1.4.0) sau elemente gata făcute (vnode)
  * right: conținutul din dreapta (utilizator, temă, ieșire) – forma veche, ascuns pe telefon până la ☰
  * v1.3.0 (Ion, 08.11.2026): cod + sb (sau aplicatii) → <icc-aplicatie>: sigla deschide lista aplicațiilor tale, cardul cu numele duce la start;
  *   cont → sarcinile, zi/noapte și <icc-utilizator>, mereu la vedere (și pe telefon, lângă ☰)
@@ -76,7 +101,7 @@ function Antet({ brand, home = '#/', portal = PORTAL, links = [], right, cod, sb
         <nav class=${cx('relative z-10 order-4 flex-col max-lg:w-full max-lg:overflow-y-auto max-lg:pb-2 lg:order-2 lg:flex lg:flex-row lg:items-center lg:gap-5 xl:gap-7', cont && 'lg:mr-auto',
           '[@media(max-height:500px)]:max-h-[60vh]', open ? 'flex' : 'hidden')}
           onClick=${(e) => { if (e.target.closest('a')) setOpen(false); }}>
-          ${links.map((l) => (l && l.href ? html`<a href=${l.href} class=${navLink(l.on)} aria-current=${l.on ? 'page' : undefined}>${l.label}</a>` : l))}
+          ${links.map((l) => (l && l.href ? html`<a href=${l.href} class=${navLink(l.on)} aria-current=${l.on ? 'page' : undefined}>${l.label}</a>` : l && l.sub ? html`<${Grup} l=${l} />` : l))}
         </nav>
         ${right && html`<div class=${cx('relative z-10 order-5 items-center gap-2 text-xs font-medium text-muted-foreground lg:order-3 lg:ml-auto lg:flex',
           'max-lg:w-full max-lg:flex-wrap max-lg:py-3', open ? 'flex' : 'hidden')}>${right}</div>`}
