@@ -8,6 +8,7 @@
 - `Antet`: proprietăți noi, opționale: `cod` + `sb` (sau `aplicatii`) pun cardul în locul numelui; `cont` = sarcinile, zi/noapte și cercul,
   mereu la vedere (și pe telefon, lângă ☰). Aplicațiile care nu le dau arată ca înainte.
 - REGULI.md 4d: bara compactă.
+- `navLink` exportat direct din `antet.js` (clasele unei legături din bară), pentru aplicațiile React care nu folosesc `Antet`.
 
 ## v1.2.3 – 07.11.2026 (reparație)
 - Antetul (regula lui Ion): sigla firmei duce la portal (`portal`, implicit https://apps.instalcorp.ro/), iar numele aplicației,

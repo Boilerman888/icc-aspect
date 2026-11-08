@@ -28,7 +28,7 @@ function useScrolled(px = 24) {
 }
 
 // clasele unei legături din meniu (exportate ca aplicația să le dea și pieselor proprii, ex. widgetul de sarcini)
-const navLink = (on) => cx('inline-flex items-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium no-underline transition-colors',
+export const navLink = (on) => cx('inline-flex items-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium no-underline transition-colors',
   'max-lg:min-h-11 max-lg:border-b max-lg:border-border max-lg:px-1 max-lg:text-base',
   on ? 'text-foreground' : 'text-muted-foreground hover:text-foreground');
 
