@@ -1,5 +1,15 @@
 # Istoric versiuni
 
+## v1.3.0 – 08.11.2026
+- `cont.js` (nou): două elemente HTML proprii, aceleași în Preact, JavaScript simplu și React (cerute de Ion pe 08.11):
+  `<icc-aplicatie>` = sigla firmei, care la clic deschide lista aplicațiilor la care omul are acces (din portal, `portal.eu()`),
+  plus „Toate aplicațiile”, și cardul cu numele aplicației, care duce la pagina de start (fără listă, cerut de Ion); `<icc-utilizator>` = cercul cu inițiale și meniul
+  utilizatorului (ajutor, setări, versiunea, ieșire).
+- `Antet`: proprietăți noi, opționale: `cod` + `sb` (sau `aplicatii`) pun cardul în locul numelui; `cont` = sarcinile, zi/noapte și cercul,
+  mereu la vedere (și pe telefon, lângă ☰). Aplicațiile care nu le dau arată ca înainte.
+- REGULI.md 4d: bara compactă.
+- `navLink` exportat direct din `antet.js` (clasele unei legături din bară), pentru aplicațiile React care nu folosesc `Antet`.
+
 ## v1.2.3 – 07.11.2026 (reparație)
 - Antetul (regula lui Ion): sigla firmei duce la portal (`portal`, implicit https://apps.instalcorp.ro/), iar numele aplicației,
   scris în dreapta siglei și vizibil pe toate ecranele, duce la pagina de start (`home`). Clasele `SIGLA_LINK`, `NUME_APP` și adresa `PORTAL`
