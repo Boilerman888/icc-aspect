@@ -56,7 +56,7 @@ function Antet({ brand, home = '#/', portal = PORTAL, links = [], right, cod, sb
     <header data-ro data-scrolled=${pill ? 'true' : 'false'} class=${cx('group z-40 flow-root w-full px-4 sm:px-6 lg:px-0 print:hidden',
       'sticky top-0 [@media(max-height:500px)]:static',
       open ? 'h-auto bg-background' : 'h-14 lg:h-16')}>
-      <div class=${cx('relative mx-auto flex w-full max-w-[1240px] flex-wrap items-center gap-x-6 gap-y-0 rounded-full border border-transparent px-0 lg:flex-nowrap lg:px-9',
+      <div class=${cx('relative mx-auto flex w-full max-w-[1240px] flex-wrap items-center gap-x-2 gap-y-0 sm:gap-x-6 rounded-full border border-transparent px-0 lg:flex-nowrap lg:px-9',
         'transition-[max-width,height,margin,padding,background-color,border-color,box-shadow] duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]',
         open ? 'h-auto min-h-14' : 'h-14 lg:h-16',
         'group-data-[scrolled=true]:mt-3 group-data-[scrolled=true]:h-11 group-data-[scrolled=true]:px-3 lg:group-data-[scrolled=true]:h-12',
@@ -78,8 +78,8 @@ function Antet({ brand, home = '#/', portal = PORTAL, links = [], right, cod, sb
           onClick=${(e) => { if (e.target.closest('a')) setOpen(false); }}>
           ${links.map((l) => (l && l.href ? html`<a href=${l.href} class=${navLink(l.on)} aria-current=${l.on ? 'page' : undefined}>${l.label}</a>` : l))}
         </nav>
-        <div class=${cx('relative z-10 order-5 items-center gap-2 text-xs font-medium text-muted-foreground lg:order-3 lg:ml-auto lg:flex',
-          'max-lg:w-full max-lg:flex-wrap max-lg:py-3', open ? 'flex' : 'hidden')}>${right}</div>
+        ${right && html`<div class=${cx('relative z-10 order-5 items-center gap-2 text-xs font-medium text-muted-foreground lg:order-3 lg:ml-auto lg:flex',
+          'max-lg:w-full max-lg:flex-wrap max-lg:py-3', open ? 'flex' : 'hidden')}>${right}</div>`}
       </div>
     </header>`;
 }
