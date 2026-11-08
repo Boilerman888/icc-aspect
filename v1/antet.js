@@ -15,6 +15,11 @@ export const PORTAL = 'https://apps.instalcorp.ro/';
 export const SIGLA_LINK = 'flex shrink-0 items-center no-underline';
 export const NUME_APP = 'text-base font-semibold tracking-tight whitespace-nowrap text-foreground no-underline hover:text-foreground/80';
 
+// clasele unei legături din meniu (exportate ca aplicația să le dea și pieselor proprii, ex. widgetul de sarcini)
+export const navLink = (on) => cx('inline-flex items-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium no-underline transition-colors',
+  'max-lg:min-h-11 max-lg:border-b max-lg:border-border max-lg:px-1 max-lg:text-base',
+  on ? 'text-foreground' : 'text-muted-foreground hover:text-foreground');
+
 export function creeazaAntet({ html, useState, useEffect }) {
 
 function useScrolled(px = 24) {
@@ -26,11 +31,6 @@ function useScrolled(px = 24) {
   }, [px]);
   return s;
 }
-
-// clasele unei legături din meniu (exportate ca aplicația să le dea și pieselor proprii, ex. widgetul de sarcini)
-export const navLink = (on) => cx('inline-flex items-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium no-underline transition-colors',
-  'max-lg:min-h-11 max-lg:border-b max-lg:border-border max-lg:px-1 max-lg:text-base',
-  on ? 'text-foreground' : 'text-muted-foreground hover:text-foreground');
 
 /**
  * brand: numele aplicației, scris în dreapta siglei; duce la pagina de start a aplicației (home)
