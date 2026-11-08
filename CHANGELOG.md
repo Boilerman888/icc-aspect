@@ -2,8 +2,8 @@
 
 ## v1.3.0 – 08.11.2026
 - `cont.js` (nou): două elemente HTML proprii, aceleași în Preact, JavaScript simplu și React (cerute de Ion pe 08.11):
-  `<icc-aplicatie>` = cardul de lângă siglă, cu numele aplicației (→ pagina de start) și săgeata care deschide lista aplicațiilor
-  la care omul are acces (din portal, `portal.eu()`), plus „Toate aplicațiile”; `<icc-utilizator>` = cercul cu inițiale și meniul
+  `<icc-aplicatie>` = sigla firmei, care la clic deschide lista aplicațiilor la care omul are acces (din portal, `portal.eu()`),
+  plus „Toate aplicațiile”, și cardul cu numele aplicației, care duce la pagina de start (fără listă, cerut de Ion); `<icc-utilizator>` = cercul cu inițiale și meniul
   utilizatorului (ajutor, setări, versiunea, ieșire).
 - `Antet`: proprietăți noi, opționale: `cod` + `sb` (sau `aplicatii`) pun cardul în locul numelui; `cont` = sarcinile, zi/noapte și cercul,
   mereu la vedere (și pe telefon, lângă ☰). Aplicațiile care nu le dau arată ca înainte.

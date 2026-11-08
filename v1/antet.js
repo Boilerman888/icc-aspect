@@ -37,7 +37,7 @@ function useScrolled(px = 24) {
  * portal: unde duce sigla firmei (implicit portalul apps.instalcorp.ro) – regula lui Ion, v1.2.3
  * links: [{ href, label, on }] sau elemente gata făcute (vnode)
  * right: conținutul din dreapta (utilizator, temă, ieșire) – forma veche, ascuns pe telefon până la ☰
- * v1.3.0 (Ion, 08.11.2026): cod + sb (sau aplicatii) → numele aplicației devine cardul <icc-aplicatie> cu lista aplicațiilor tale;
+ * v1.3.0 (Ion, 08.11.2026): cod + sb (sau aplicatii) → <icc-aplicatie>: sigla deschide lista aplicațiilor tale, cardul cu numele duce la start;
  *   cont → sarcinile, zi/noapte și <icc-utilizator>, mereu la vedere (și pe telefon, lângă ☰)
  */
 function Antet({ brand, home = '#/', portal = PORTAL, links = [], right, cod, sb, aplicatii, cont }) {
@@ -66,10 +66,10 @@ function Antet({ brand, home = '#/', portal = PORTAL, links = [], right, cod, sb
         'dark:group-data-[scrolled=true]:border-white/10 dark:group-data-[scrolled=true]:bg-[#2a2a2a]/60')}>
         <span aria-hidden="true" class="glass-noise pointer-events-none absolute inset-0 rounded-full opacity-0 mix-blend-overlay transition-opacity duration-700 group-data-[scrolled=true]:opacity-100"></span>
         <div class="relative z-10 flex shrink-0 items-center gap-2.5">
-          <a href=${portal} class=${SIGLA_LINK} title="Toate aplicațiile Instalcorp" aria-label="Portalul aplicațiilor Instalcorp">
-            <img class="sigla-dark h-7 w-auto" src="/logo-dark.png" alt="" /><img class="sigla-light h-7 w-auto" src="/logo-light.png" alt="" /></a>
           ${cod ? html`<icc-aplicatie nume=${brand} acasa=${home} cod=${cod} sb=${sb} aplicatii=${aplicatii}></icc-aplicatie>`
-            : html`<a href=${home} class=${NUME_APP}>${brand}</a>`}</div>
+            : html`<a href=${portal} class=${SIGLA_LINK} title="Toate aplicațiile Instalcorp" aria-label="Portalul aplicațiilor Instalcorp">
+              <img class="sigla-dark h-7 w-auto" src="/logo-dark.png" alt="" /><img class="sigla-light h-7 w-auto" src="/logo-light.png" alt="" /></a>
+              <a href=${home} class=${NUME_APP}>${brand}</a>`}</div>
         ${cont && html`<div class="relative z-10 order-2 ml-auto flex items-center gap-1.5 lg:order-3 lg:ml-0 [&_*]:shrink-0">${cont}</div>`}
         <button type="button" class=${btn('ghost', 'icon', cx('relative z-10 order-3 text-lg lg:hidden', !cont && 'ml-auto'))} aria-label="Meniu" aria-expanded=${open}
           onClick=${() => setOpen(!open)}>${open ? '✕' : '☰'}</button>
