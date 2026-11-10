@@ -54,7 +54,8 @@ class IccAplicatie extends Derulant {
     this._incarc = false; this.deseneaza();
   }
   deschide() { super.deschide(); this.incarca(); }
-  connectedCallback() { super.connectedCallback(); this.classList.add('items-center', 'gap-2.5'); }
+  // v1.4.1: pe ecranele foarte înguste cardul cedează loc (numele se scurtează cu „…”), în loc să intre peste butoanele din dreapta
+  connectedCallback() { super.connectedCallback(); this.classList.remove('shrink-0'); this.classList.add('items-center', 'gap-1.5', 'sm:gap-2.5', 'min-w-0'); }
   deseneaza() {
     const nume = this.getAttribute('nume') || '';
     const cod = this.getAttribute('cod') || '';
@@ -78,7 +79,7 @@ class IccAplicatie extends Derulant {
       s.append(imgs());
     }
     // cardul cu numele aplicației: duce doar la pagina de start a aplicației
-    const a = el('a', 'flex h-8 items-center rounded-md border border-border bg-card px-2.5 text-[15px] leading-none font-semibold tracking-tight whitespace-nowrap text-card-foreground no-underline shadow-xs hover:bg-accent', nume);
+    const a = el('a', 'block h-8 min-w-0 truncate rounded-md border border-border bg-card px-2.5 text-[15px] leading-[30px] font-semibold tracking-tight whitespace-nowrap text-card-foreground no-underline shadow-xs hover:bg-accent', nume);
     a.href = this.getAttribute('acasa') || '#/'; a.title = 'Pagina de start ' + nume;
     this.append(s, a);
     if (!this._deschis) return;
