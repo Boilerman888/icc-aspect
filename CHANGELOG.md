@@ -1,5 +1,12 @@
 # Istoric versiuni
 
+## v1.4.1 – 10.11.2026 (reparație)
+- Antetul pe telefon, derulat (semnalat de Ion pe 10.11, Oferte în Telegram): butonul ☰ nu mai cade pe un rând al doilea, sub pastilă,
+  peste conținutul paginii; rândul pastilei nu se mai rupe cât meniul e închis (spații mai mici pe telefon, sigla și cardul cedează loc).
+- `<icc-aplicatie>`: pe ecranele foarte înguste cardul cu numele se scurtează („Cash F…”) în loc să intre peste butoanele din dreapta.
+- Pagina nu se mai vede pe lângă și pe sub pastilă: banda antetului are fundalul paginii, care se stinge doar la marginea de jos;
+  sticla pastilei e mai puțin transparentă (85% zi, 90% noapte), ca textul din spate să nu se mai citească prin ea.
+
 ## v1.4.0 – 08.11.2026
 - `Antet`: o legătură din bară poate avea sub-pagini (`{ label, sub: [{ href, label, nota, on }] }`): pe calculator se deschide
   o listă la clic (cu explicația scurtă sub fiecare nume), pe telefon apar la vedere în meniul ☰, sub un titlu mic.
