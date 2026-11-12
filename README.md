@@ -15,6 +15,7 @@ Tema vine din [dashboardcn](https://github.com/NoahGdev/dashboardcn) (MIT), adap
 | `v1/antet.js` | Antetul aplicației (bandă → pastilă la derulare, meniu pe telefon, comutator zi/noapte) | aplicațiile Preact |
 | `v1/clasic.css` | Tema ICC v2 pentru clasele vechi (culori, câmpuri, liste, carduri, tabele, ferestre); se importă în stratul `legacy` | aplicațiile Preact cu stiluri vechi |
 | `v1/punte.css` | Aduce paginile vechi (clasele din style.css / tema-icc) la regulile aspectului; vezi REGULI.md | aplicațiile Preact cu stiluri vechi |
+| `v1/vasile.js` | `<icc-vasile aplicatie="…">`: asistentul AI Vasile (fața în colț, panoul plutitor); se dă `el.sb = supabase`, opțional `el.context`; are stilurile lui | toate aplicațiile |
 
 Noaptea se aprinde cu `data-theme="dark"` pe `<html>` (pus de `tema-icc.js` al fiecărei aplicații) sau cu clasa `.dark`.
 

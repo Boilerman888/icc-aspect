@@ -1,5 +1,17 @@
 # Istoric versiuni
 
+## v1.5.0 – 12.11.2026
+- `vasile.js` (nou): `<icc-vasile aplicatie="…">`, asistentul AI Vasile în toate aplicațiile (aprobat de Ion pe 12.11).
+  Închis: fața lui Vasile într-un cerc cu albastrul temei, în colțul din dreapta-jos (Ctrl+J). Deschis: un panou plutitor în dreapta,
+  sub antet; pagina se strânge spre stânga cât e deschis, ca să nu acopere datele (sub 1024 px panoul ia tot ecranul).
+  Jos, pe 27% din înălțime: portretul, caseta de scris și rândul Fișier · ✦ Opus · Trimite. „Discuție nouă” începe o conversație curată;
+  minimizat, conversația rămâne, iar un răspuns nou aprinde un punct albastru pe buton.
+- Panoul doar desenează și trimite (fără reguli, chei sau date): drepturile și uneltele se hotărăsc pe server, după logarea comună
+  și bifele omului din Portal. Butonul apare doar celor logați cu acces în Portal.
+- Evenimentul `icc-vasile` (detail `{ deschis }`) și clasa `icc-vasile-deschis` pe `<html>`, pentru aplicațiile care vor să ascundă
+  ceva cât e panoul deschis (Service: harta; Instalații: stivele).
+- Fața rotundă e o excepție de la regula „rounded-md, fără pastile”: e un avatar, ca cercul utilizatorului.
+
 ## v1.4.2 – 12.11.2026
 - `<icc-utilizator>`: rândul fix „Bibliotecă tehnică” în meniul cercului, deasupra versiunii; deschide https://apps.instalcorp.ro/biblioteca/
   într-o filă nouă (biblioteca unică de normative și manuale, decizia lui Ion din 11.11.2026). Atributul `fara-biblioteca` îl ascunde
