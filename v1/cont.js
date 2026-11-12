@@ -1,16 +1,18 @@
 // icc-aspect v1 – cele două piese comune din antet (Ion, 08.11.2026), ca elemente HTML proprii (web components):
 //   <icc-aplicatie>  cardul de lângă siglă: numele aplicației (→ pagina de start) + săgeata care deschide lista aplicațiilor tale;
-//   <icc-utilizator> cercul cu inițiale: meniul utilizatorului (ajutor, setări, versiune, ieșire).
+//   <icc-utilizator> cercul cu inițiale: meniul utilizatorului (ajutor, setări, Bibliotecă tehnică, versiune, ieșire).
 // Merg la fel în Preact, în JavaScript simplu și în React, fără nimic în plus: se importă fișierul o dată și se scrie elementul.
 // Nu folosesc „shadow DOM”, deci primesc clasele temei (tema.css scanează și acest fișier).
 //
 // <icc-aplicatie nume="Oferte" acasa="#/registru" cod="oferte" [sigla-luminoasa="/logo-light.png" sigla-intunecata="/logo-dark.png"]>
 //   proprietăți: .sb = clientul Supabase (lista vine din portal.eu(), la prima deschidere) sau .aplicatii = [{ cod, nume, url, acces, stare }]
-// <icc-utilizator nume="Ion Zaifu" detaliu="ion@… · Admin" versiune="Oferte 2.4">
+// <icc-utilizator nume="Ion Zaifu" detaliu="ion@… · Admin" versiune="Oferte 2.4" [fara-biblioteca]>
 //   proprietăți: .elemente = [{ label, href, onClick, nou } sau { titlu }] (null-urile se sar), .onIesi = () => …   (sau evenimentul „iesire”)
 import { cx, popover, menuItem } from './ui.js';
 
 const PORTAL = 'https://apps.instalcorp.ro/';
+const BIBLIOTECA = PORTAL + 'biblioteca/';
+const CARTE = '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>';
 const SVG = (d, cls = 'size-4') => `<svg viewBox="0 0 24 24" class="${cls}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const JOS = '<path d="m6 9 6 6 6-6"/>';
 const BIFA = '<path d="M20 6 9 17l-5-5"/>';
@@ -138,6 +140,15 @@ class IccUtilizator extends Derulant {
       m.append(i);
     }
     if (lista.length) m.append(el('div', '-mx-1 my-1 h-px bg-border'));
+    // v1.4.2: biblioteca tehnică (normative, manuale, proceduri ICC) se deschide din orice aplicație (Ion, 11.11.2026)
+    if (!this.hasAttribute('fara-biblioteca')) {
+      const bib = el('a', cx(menuItem, 'no-underline text-popover-foreground'));
+      bib.href = BIBLIOTECA; bib.target = '_blank'; bib.rel = 'noopener'; bib.setAttribute('role', 'menuitem');
+      bib.append(el('span', 'flex-1', 'Bibliotecă tehnică'));
+      bib.insertAdjacentHTML('beforeend', SVG(CARTE, 'size-4 opacity-60'));
+      bib.onclick = () => this.inchide();
+      m.append(bib, el('div', '-mx-1 my-1 h-px bg-border'));
+    }
     if (this.getAttribute('versiune')) m.append(el('div', 'px-2 py-1 text-xs text-muted-foreground', this.getAttribute('versiune')));
     const ies = el('button', cx(menuItem, 'border-0 bg-transparent text-left text-destructive-foreground hover:bg-destructive/10!'), 'Ieșire');
     ies.type = 'button'; ies.setAttribute('role', 'menuitem');

@@ -1,5 +1,10 @@
 # Istoric versiuni
 
+## v1.4.2 – 12.11.2026
+- `<icc-utilizator>`: rândul fix „Bibliotecă tehnică” în meniul cercului, deasupra versiunii; deschide https://apps.instalcorp.ro/biblioteca/
+  într-o filă nouă (biblioteca unică de normative și manuale, decizia lui Ion din 11.11.2026). Atributul `fara-biblioteca` îl ascunde
+  (folosit chiar în pagina bibliotecii).
+
 ## v1.4.1 – 10.11.2026 (reparație)
 - Antetul pe telefon, derulat (semnalat de Ion pe 10.11, Oferte în Telegram): butonul ☰ nu mai cade pe un rând al doilea, sub pastilă,
   peste conținutul paginii; rândul pastilei nu se mai rupe cât meniul e închis (spații mai mici pe telefon, sigla și cardul cedează loc).
