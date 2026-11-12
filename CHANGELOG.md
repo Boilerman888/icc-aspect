@@ -1,5 +1,15 @@
 # Istoric versiuni
 
+## v1.7.0 – 12.11.2026
+- `tasker.js` (nou): `<icc-tasker aplicatie="…">`, widgetul de sarcini Tasker în toate aplicațiile (cerut de Ion pe 12.11).
+  Închis: fața lui Tasker într-un cerc mov, jos în dreapta, în stânga lui Vasile; în dreapta feței, contorul sarcinilor
+  („noi/total” pe roșu când un coleg ți-a dat ceva nou, altfel totalul), aceeași regulă ca iconița din Oferte.
+  Deschis: panou în dreapta, ca la Vasile, cu sarcinile tale nerezolvate (nouă, termen, de la cine, oferta sau contractul),
+  bifa „rezolvată” și butonul „Deschide aplicația Sarcini” (tab nou). Datele vin din schema sarcini (`widget_mele`,
+  `widget_vazut`, `widget_bifeaza`): fiecare vede și bifează doar sarcinile lui; din widget nu se creează sarcini.
+  Se mută ca Vasile (ținut apăsat 1,5 s); locul e ținut minte pe dispozitiv.
+- `vasile.js`: se închide când se deschide Tasker (și Tasker se închide când se deschide Vasile): nu stau deschiși împreună.
+
 ## v1.6.1 – 12.11.2026 (reparație)
 - `vasile.js`: butonul lui Vasile nu mai apare celor pe care serverul îi oprește (`portal.vasile_web_permis()`; decizia lui Ion
   din 12.11: instalatorii nu au Vasile în aplicații). Dacă verificarea nu răspunde, butonul rămâne, iar serverul refuză la prima cerere.

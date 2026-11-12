@@ -136,12 +136,16 @@ class IccVasile extends HTMLElement {
     window.addEventListener('resize', this._redim);
     this._hash = () => { if (this._deschis) this._deseneazaCtx(); };
     window.addEventListener('hashchange', this._hash);
+    // v1.7.0: Tasker (widgetul de sarcini) se deschide → Vasile se închide; nu stau deschiși împreună (Ion, 12.11.2026)
+    this._laTasker = (e) => { if (e.detail?.deschis && this._deschis) this.inchide(); };
+    window.addEventListener('icc-tasker', this._laTasker);
     if (this._sb) this._porneste();
   }
   disconnectedCallback() {
     document.removeEventListener('keydown', this._tasta);
     window.removeEventListener('resize', this._redim);
     window.removeEventListener('hashchange', this._hash);
+    window.removeEventListener('icc-tasker', this._laTasker);
     this._opresteCanal(); this._pagina(false);
   }
   attributeChangedCallback(n) { if (n === 'sus') this.style.setProperty('--icv-sus', (Number(this.getAttribute('sus')) || 68) + 'px'); }
