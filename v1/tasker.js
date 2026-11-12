@@ -343,7 +343,6 @@ class IccTasker extends HTMLElement {
     p.innerHTML = `
       <div class="ict-top"><b>Tasker</b><small>sarcinile tale nerezolvate</small><span class="ict-sp"></span>
         <button type="button" class="ict-b ict-ref" title="Reîncarcă" aria-label="Reîncarcă">${SVG(I.ref, 14)}</button>
-        <button type="button" class="ict-b ict-min" title="Minimizează" aria-label="Minimizează">${SVG(I.min, 14)}</button>
         <button type="button" class="ict-b ict-x" title="Închide (Esc)" aria-label="Închide">${SVG(I.x, 14)}</button></div>
       <div class="ict-sum"></div>
       <div class="ict-list" aria-live="polite"></div>
@@ -356,7 +355,6 @@ class IccTasker extends HTMLElement {
         </div>
       </div>`;
     this.append(p);
-    p.querySelector('.ict-min').onclick = () => this.inchide();
     p.querySelector('.ict-x').onclick = () => this.inchide();
     p.querySelector('.ict-ref').onclick = () => this._incarca();
     this._deseneazaLista();

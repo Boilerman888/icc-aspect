@@ -1,5 +1,10 @@
 # Istoric versiuni
 
+## v1.7.1 – 12.11.2026 (reparație)
+- `vasile.js`: „×” (Închide) nu mai face același lucru ca „–” (Minimizează). Minimizează (și Esc, Ctrl+J) păstrează conversația;
+  Închide încheie conversația (rămâne salvată), iar la următoarea deschidere Vasile pornește de la zero, ca la „Discuție nouă”.
+- `tasker.js`: panoul are doar „×” (Tasker nu are conversație de păstrat, deci „–” era în plus).
+
 ## v1.7.0 – 12.11.2026
 - `tasker.js` (nou): `<icc-tasker aplicatie="…">`, widgetul de sarcini Tasker în toate aplicațiile (cerut de Ion pe 12.11).
   Închis: fața lui Tasker într-un cerc mov, în colțul din dreapta-jos, cu Vasile în stânga lui; în dreapta feței, contorul
