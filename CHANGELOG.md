@@ -1,5 +1,9 @@
 # Istoric versiuni
 
+## v1.5.1 – 12.11.2026 (reparație)
+- `vasile.js`: pe ecranele înalte (de la ~1080 px), portretul pătrat lua prea mult loc și butonul „Trimite” ieșea din panou
+  (tăiat în dreapta, iar panoul se putea deplasa lateral). Coloana cu caseta și butoanele are acum minimum 248 px; portretul se strânge.
+
 ## v1.5.0 – 12.11.2026
 - `vasile.js` (nou): `<icc-vasile aplicatie="…">`, asistentul AI Vasile în toate aplicațiile (aprobat de Ion pe 12.11).
   Închis: fața lui Vasile într-un cerc cu albastrul temei, în colțul din dreapta-jos (Ctrl+J). Deschis: un panou plutitor în dreapta,

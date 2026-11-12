@@ -79,9 +79,9 @@ const CSS = `
 .icv-gol{margin:auto;text-align:center;color:var(--v-mut);font-size:13px;max-width:320px}
 .icv-gol b{display:block;color:var(--v-fg);font-size:14px;margin-bottom:4px;font-weight:600}
 .icv-bot{height:27%;min-height:150px;display:flex;gap:10px;padding:10px;border-top:1px solid var(--v-bd);flex-shrink:0}
-.icv-por{height:100%;aspect-ratio:1/1;border-radius:8px;background:#ddd center/cover;flex-shrink:0}
+.icv-por{height:100%;aspect-ratio:1/1;min-width:0;border-radius:8px;background:#ddd center/cover;flex-shrink:1}
 @media (max-width:520px){.icv-por,.icv-top small{display:none}}
-.icv-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.icv-col{flex:1 0 248px;min-width:0;display:flex;flex-direction:column;gap:8px}
 .icv-ta{flex:1;min-height:0;width:100%;resize:none;border:1px solid var(--v-bd);border-radius:8px;padding:10px;background:var(--v-bg);color:var(--v-fg);
   font:inherit;font-size:13.5px;outline:none}
 .icv-ta:focus{border-color:var(--v-pri);box-shadow:0 0 0 3px color-mix(in srgb,var(--v-pri) 18%,transparent)}
