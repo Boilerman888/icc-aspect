@@ -40,6 +40,10 @@ const CSS = `
 .icv-fab{position:fixed;right:24px;bottom:24px;z-index:2147483000;width:64px;height:64px;border-radius:50%;padding:4px;border:0;background:var(--v-pri);
   box-shadow:0 10px 26px color-mix(in srgb,var(--v-pri) 45%,transparent);transition:transform .15s}
 .icv-fab:hover{transform:scale(1.05)}
+.icv-fab{touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.icv-fab.icv-muta{transform:scale(1.15);cursor:grabbing;box-shadow:0 0 0 4px color-mix(in srgb,var(--v-pri) 35%,transparent),0 16px 34px rgba(0,0,0,.3);transition:transform .12s}
+@media (max-width:640px){.icv-fab{right:16px;bottom:16px;width:54px;height:54px;padding:3px}.icv-tip{right:82px;bottom:30px}}
+@media (hover:none){.icv-tip{display:none}}
 .icv-fab i{display:block;width:100%;height:100%;border-radius:50%;background:#ddd center/cover;border:2px solid #fff}
 .icv-fab .icv-dot{position:absolute;right:0;top:0;width:16px;height:16px;border-radius:50%;background:var(--v-pri);border:3px solid var(--v-bg)}
 .icv-tip{position:fixed;right:100px;bottom:42px;z-index:2147483000;background:var(--v-pri);color:var(--v-pri-fg);padding:6px 10px;border-radius:6px;
@@ -102,6 +106,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 // text simplu (ca în Telegram): se păstrează rândurile, linkurile devin clicabile
 const textHtml = (t) => esc(t).replace(/https?:\/\/[^\s<]+[^\s<.,;:!?)\]»”]/g, (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
 const ora = (d) => { try { return new Date(d).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }); } catch { return ''; } };
+const intre = (v, a, b) => Math.max(a, Math.min(b, v));
 const ls = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch { /* fără */ } } };
 
 class IccVasile extends HTMLElement {
@@ -111,6 +116,9 @@ class IccVasile extends HTMLElement {
     this._sb = null; this._vizibil = false; this._deschis = false; this._incarcat = false;
     this._mesaje = []; this._asteapta = []; this._fis = []; this._opus = false; this._areOpus = false;
     this._scrie = false; this._punct = false; this._uid = null; this._sesiune = null; this._eroare = '';
+    // v1.6.0: locul butonului mutat de om (ținut apăsat 1,5 s, apoi tras); distanța față de dreapta-jos, pe dispozitiv
+    try { const l = JSON.parse(ls.get('icc-vasile-loc') || 'null'); this._loc = l && Number.isFinite(l.r) && Number.isFinite(l.b) ? l : null; } catch { this._loc = null; }
+    this._redim = () => { const b = this.querySelector('.icv-fab'); if (b) this._aplicaLoc(b, this.querySelector('.icv-tip')); };
     this._tasta = (e) => {
       if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'j' || e.key === 'J')) { if (!this._vizibil) return; e.preventDefault(); this._deschis ? this.inchide() : this.deschide(); }
       else if (e.key === 'Escape' && this._deschis && this.contains(e.target)) this.inchide();
@@ -125,12 +133,14 @@ class IccVasile extends HTMLElement {
     if (!document.getElementById('icc-vasile-stil')) { const s = document.createElement('style'); s.id = 'icc-vasile-stil'; s.textContent = CSS; document.head.append(s); }
     this.classList.add('icv');
     document.addEventListener('keydown', this._tasta);
+    window.addEventListener('resize', this._redim);
     this._hash = () => { if (this._deschis) this._deseneazaCtx(); };
     window.addEventListener('hashchange', this._hash);
     if (this._sb) this._porneste();
   }
   disconnectedCallback() {
     document.removeEventListener('keydown', this._tasta);
+    window.removeEventListener('resize', this._redim);
     window.removeEventListener('hashchange', this._hash);
     this._opresteCanal(); this._pagina(false);
   }
@@ -375,6 +385,58 @@ class IccVasile extends HTMLElement {
     if (jos || this._asteapta.length) box.scrollTop = box.scrollHeight;
   }
 
+  // Butonul închis: apăsare scurtă = deschide; ținut apăsat 1,5 s = se ridică și se mută cu degetul (sau cu mausul),
+  // ca să nu acopere butoanele aplicației; locul rămâne ținut minte pe dispozitiv. Tastatura (Enter / Spațiu) deschide.
+  _apasare(b, t) {
+    const LUNG = 1500, PRAG = 10;
+    let st = null;
+    b.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || st) return;
+      const r = b.getBoundingClientRect();
+      st = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: e.clientX - r.left, dy: e.clientY - r.top, mod: 'apasat' };
+      try { b.setPointerCapture(e.pointerId); } catch { /* fără captură */ }
+      st.timer = setTimeout(() => {
+        if (!st || st.mod !== 'apasat') return;
+        st.mod = 'muta'; b.classList.add('icv-muta'); if (t) t.style.opacity = '0';
+        try { if (navigator.vibrate) navigator.vibrate(30); } catch { /* fără vibrație */ }
+      }, LUNG);
+    });
+    b.addEventListener('pointermove', (e) => {
+      if (!st || e.pointerId !== st.id) return;
+      if (st.mod === 'apasat') { if (Math.hypot(e.clientX - st.x, e.clientY - st.y) > PRAG) { st.mod = 'anulat'; clearTimeout(st.timer); } return; }
+      if (st.mod !== 'muta') return;
+      e.preventDefault();
+      const w = b.offsetWidth, h = b.offsetHeight, W = document.documentElement.clientWidth || innerWidth;
+      const st0 = intre(e.clientX - st.dx, 4, W - w - 4), sus = intre(e.clientY - st.dy, 4, innerHeight - h - 4);
+      this._loc = { r: Math.round(W - st0 - w), b: Math.round(innerHeight - sus - h) };
+      this._aplicaLoc(b, t);
+    });
+    const gata = (e, anulat) => {
+      if (!st || e.pointerId !== st.id) return;
+      clearTimeout(st.timer);
+      const mod = st.mod; st = null;
+      b.classList.remove('icv-muta'); if (t) t.style.opacity = '';
+      if (mod === 'muta') { if (this._loc) ls.set('icc-vasile-loc', JSON.stringify(this._loc)); return; }
+      if (mod === 'apasat' && !anulat) this.deschide();
+    };
+    b.addEventListener('pointerup', (e) => gata(e, false));
+    b.addEventListener('pointercancel', (e) => gata(e, true));
+    b.addEventListener('contextmenu', (e) => e.preventDefault());
+    b.addEventListener('click', (e) => { if (e.detail === 0) this.deschide(); });
+  }
+
+  _aplicaLoc(b, t) {
+    const L = this._loc;
+    if (!L) return;
+    const W = document.documentElement.clientWidth || innerWidth, w = b.offsetWidth || 64, h = b.offsetHeight || 64;
+    const r = intre(L.r, 4, Math.max(4, W - w - 4)), jos = intre(L.b, 4, Math.max(4, innerHeight - h - 4));
+    b.style.right = r + 'px'; b.style.bottom = jos + 'px';
+    if (!t) return;
+    t.style.bottom = Math.round(jos + h / 2 - 14) + 'px';
+    if (W - r - w / 2 < W / 2) { t.style.left = Math.round(W - r + 12) + 'px'; t.style.right = 'auto'; }
+    else { t.style.right = Math.round(r + w + 12) + 'px'; t.style.left = 'auto'; }
+  }
+
   deseneaza(doarMesaje) {
     if (doarMesaje && this._deschis && this.querySelector('.icv-p')) { this._deseneazaMesaje(); this._deseneazaJos(); return; }
     this.replaceChildren();
@@ -383,9 +445,10 @@ class IccVasile extends HTMLElement {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'icv-fab';
       b.setAttribute('aria-label', 'Deschide asistentul Vasile (Ctrl+J)');
       b.innerHTML = `<i style="background-image:url('${esc(this._poza('fata'))}')"></i>${this._punct ? '<span class="icv-dot" title="Răspuns nou"></span>' : ''}`;
-      b.onclick = () => this.deschide();
       const t = document.createElement('div'); t.className = 'icv-tip'; t.textContent = 'Vasile · Ctrl J';
       this.append(b, t);
+      this._aplicaLoc(b, t);
+      this._apasare(b, t);
       return;
     }
     const p = document.createElement('section'); p.className = 'icv-p'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Vasile, asistentul AI');
