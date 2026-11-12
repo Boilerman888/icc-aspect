@@ -173,7 +173,8 @@ class IccVasile extends HTMLElement {
   _contextAcum() {
     let c = {};
     try { c = (typeof this._ctx === 'function' ? this._ctx() : this._ctx) || {}; } catch { c = {}; }
-    const pagina = c.pagina || (document.title || '').split(/[·|–-]/)[0].trim();
+    // implicit: legătura activă din bara antetului (aria-current="page", pusă de Antet)
+    const pagina = c.pagina || document.querySelector('[aria-current="page"]')?.textContent?.trim() || '';
     return { pagina: String(pagina || '').slice(0, 80), selectat: c.selectat ? String(c.selectat).slice(0, 200) : undefined, detalii: c.detalii ? String(c.detalii).slice(0, 600) : undefined };
   }
 
