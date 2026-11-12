@@ -66,10 +66,6 @@ const CSS = `
   background:var(--t-bg);font-size:12.5px;font-weight:500;white-space:nowrap;text-decoration:none;color:inherit}
 .ict-b:hover{background:var(--t-acc)}.ict-b:disabled{opacity:.5;cursor:default}
 .ict-b.pri{background:var(--t-mov);color:#fff;border-color:transparent}.ict-b.pri:hover{filter:brightness(1.1)}
-.ict-sum{display:flex;flex-wrap:wrap;gap:6px;margin:10px 14px 0;flex-shrink:0}
-.ict-sum span{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:6px;background:var(--t-acc);font-size:12px;color:var(--t-mut)}
-.ict-sum span b{color:var(--t-fg);font-weight:600;margin-right:4px}
-.ict-sum span.r b{color:var(--t-rosu)}
 .ict-list{flex:1;min-height:0;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
 .ict-t{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border:1px solid var(--t-bd);border-radius:8px;background:var(--t-card)}
 .ict-t.noua{border-left:3px solid var(--t-rosu)}
@@ -87,11 +83,28 @@ const CSS = `
 .ict-gol{margin:auto;text-align:center;color:var(--t-mut);font-size:13px;max-width:320px}
 .ict-gol b{display:block;color:var(--t-fg);font-size:14px;margin-bottom:4px;font-weight:600}
 .ict-err{color:var(--t-rosu);font-size:12.5px}
-.ict-bot{height:22%;min-height:130px;display:flex;gap:12px;padding:10px;border-top:1px solid var(--t-bd);flex-shrink:0}
+.ict-bot{height:22%;min-height:150px;display:flex;gap:12px;padding:10px;border-top:1px solid var(--t-bd);flex-shrink:0}
 .ict-por{height:100%;aspect-ratio:1/1;min-width:0;border-radius:8px;background:#2a1240 center/cover;flex-shrink:1}
 @media (max-width:520px){.ict-por,.ict-top small{display:none}}
 .ict-col{flex:1 0 220px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:10px;font-size:12.5px;color:var(--t-mut)}
-.ict-col .ict-b.pri{height:36px;font-size:13.5px;font-weight:600;align-self:flex-start;padding:0 14px}
+.ict-col{justify-content:center;gap:10px}
+/* v1.7.2 (Ion 12.11): în dreapta portretului, cifrele ca plăci care filtrează lista + butoanele */
+.ict-st{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ict-k{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;min-width:0;padding:5px 8px;border-radius:8px;
+  border:1px solid var(--t-bd);background:var(--t-card);text-align:left;color:var(--t-mut);font-size:11.5px;line-height:1.15}
+.ict-k b{font-size:17px;font-weight:700;color:var(--t-fg);font-variant-numeric:tabular-nums}
+.ict-k.r b{color:var(--t-rosu)}.ict-k.g b{color:var(--t-gal)}
+.ict-k:hover:not(:disabled){background:var(--t-acc)}.ict-k:disabled{opacity:.45;cursor:default}
+.ict-k[aria-pressed=true]{border-color:var(--t-mov);box-shadow:0 0 0 2px color-mix(in srgb,var(--t-mov) 30%,transparent)}
+.ict-k span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.ict-btns{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ict-btns .ict-b{flex:1 1 auto}
+.ict-col .ict-b.pri{height:34px;font-size:13px;font-weight:600;padding:0 12px}
+.ict-col .ict-b.sec{height:34px;color:var(--t-fg)}
+.ict-fil{display:flex;align-items:center;gap:8px;margin:8px 14px 0;font-size:12px;color:var(--t-mut);flex-shrink:0}
+.ict-fil button{border:0;background:none;padding:0;color:var(--t-mov);text-decoration:underline;font-size:12px}
+/* Vasile deschis → butonul Tasker se ascunde (și invers, în vasile.js) */
+html.icc-vasile-deschis .ict-grp{display:none}
 @media (min-width:1024px){html.icc-tasker-deschis body{padding-right:494px!important}}
 `;
 
@@ -111,7 +124,7 @@ class IccTasker extends HTMLElement {
   constructor() {
     super();
     this._sb = null; this._vizibil = false; this._deschis = false;
-    this._d = { total: 0, noi: 0, lista: [], url: null, oferte: false }; this._noiAfisate = new Set(); this._eroare = '';
+    this._d = { total: 0, noi: 0, lista: [], url: null, oferte: false }; this._noiAfisate = new Set(); this._eroare = ''; this._filtru = 'toate';
     try { const l = JSON.parse(ls.get('icc-tasker-loc') || 'null'); this._loc = l && Number.isFinite(l.r) && Number.isFinite(l.b) ? l : null; } catch { this._loc = null; }
     this._redim = () => this._aplicaLoc();
     this._tasta = (e) => { if (e.key === 'Escape' && this._deschis && this.contains(e.target)) this.inchide(); };
@@ -286,12 +299,26 @@ class IccTasker extends HTMLElement {
 
   _deseneazaLista() {
     const box = this.querySelector('.ict-list'); if (!box) return;
-    const sum = this.querySelector('.ict-sum');
-    const l = this._d.lista;
-    const deschise = l.filter((t) => !t.gata);
-    const dep = deschise.filter((t) => stareTermen(t) === 'dep').length, az = deschise.filter((t) => stareTermen(t) === 'azi').length;
-    if (sum) sum.innerHTML = `<span><b>${deschise.length}</b>nerezolvate</span>${this._noiAfisate.size ? `<span class="r"><b>${this._noiAfisate.size}</b>noi</span>` : ''}`
-      + `${dep ? `<span class="r"><b>${dep}</b>cu termen depășit</span>` : ''}${az ? `<span><b>${az}</b>azi</span>` : ''}`;
+    const l0 = this._d.lista;
+    const deschise = l0.filter((t) => !t.gata);
+    const nr = { toate: deschise.length, noi: deschise.filter((t) => this._noiAfisate.has(t.id)).length,
+      dep: deschise.filter((t) => stareTermen(t) === 'dep').length, azi: deschise.filter((t) => stareTermen(t) === 'azi').length };
+    if (this._filtru !== 'toate' && !nr[this._filtru]) this._filtru = 'toate';
+    const ok = { toate: () => true, noi: (t) => this._noiAfisate.has(t.id), dep: (t) => stareTermen(t) === 'dep', azi: (t) => stareTermen(t) === 'azi' }[this._filtru];
+    const l = l0.filter((t) => t.gata || ok(t));
+    const st = this.querySelector('.ict-st');
+    if (st) {
+      const K = [['toate', 'toate', ''], ['noi', 'noi', 'r'], ['dep', 'depășite', 'r'], ['azi', 'azi', 'g']];
+      st.innerHTML = K.map(([k, et, cl]) => `<button type="button" class="ict-k ${nr[k] ? cl : ''}" data-k="${k}" aria-pressed="${this._filtru === k}"`
+        + `${k !== 'toate' && !nr[k] ? ' disabled' : ''} title="${k === 'toate' ? 'Arată toate sarcinile tale nerezolvate' : 'Arată doar sarcinile: ' + et}"><b>${nr[k]}</b><span>${et}</span></button>`).join('');
+      st.querySelectorAll('.ict-k').forEach((b) => { b.onclick = () => { this._filtru = this._filtru === b.dataset.k ? 'toate' : b.dataset.k; this._deseneazaLista(); }; });
+    }
+    const fil = this.querySelector('.ict-fil');
+    if (fil) {
+      fil.hidden = this._filtru === 'toate';
+      fil.innerHTML = this._filtru === 'toate' ? '' : `<span>Arăt doar: <b>${{ noi: 'noi', dep: 'cu termen depășit', azi: 'cu termen azi' }[this._filtru]}</b> (${nr[this._filtru]} din ${nr.toate})</span><button type="button">toate</button>`;
+      const b = fil.querySelector('button'); if (b) b.onclick = () => { this._filtru = 'toate'; this._deseneazaLista(); };
+    }
     const f = document.createDocumentFragment();
     if (!l.length) {
       const g = document.createElement('div'); g.className = 'ict-gol';
@@ -344,19 +371,27 @@ class IccTasker extends HTMLElement {
       <div class="ict-top"><b>Tasker</b><small>sarcinile tale nerezolvate</small><span class="ict-sp"></span>
         <button type="button" class="ict-b ict-ref" title="Reîncarcă" aria-label="Reîncarcă">${SVG(I.ref, 14)}</button>
         <button type="button" class="ict-b ict-x" title="Închide (Esc)" aria-label="Închide">${SVG(I.x, 14)}</button></div>
-      <div class="ict-sum"></div>
+      <div class="ict-fil" hidden></div>
       <div class="ict-list" aria-live="polite"></div>
       <div class="ict-bot">
         <div class="ict-por" style="background-image:url('${esc(this._poza('portret'))}')" role="img" aria-label="Tasker"></div>
         <div class="ict-col">
-          <span>Bifează aici ce ai terminat. Sarcini noi, modificări, recurente și sarcinile echipei: în aplicația Sarcini.</span>
-          ${url ? `<a class="ict-b pri" href="${esc(url)}" target="_blank" rel="noopener">Deschide aplicația Sarcini ${SVG(I.ext, 15)}</a>`
-            : '<span><b>Aplicația Sarcini</b> se pregătește; până atunci sarcinile tale le vezi și le bifezi aici.</span>'}
+          <div class="ict-st" role="group" aria-label="Sarcinile tale, pe feluri (apasă ca să filtrezi lista)"></div>
+          <div class="ict-btns">
+            ${url ? `<a class="ict-b pri" href="${esc(url)}" target="_blank" rel="noopener" title="Deschide aplicația Sarcini (tab nou): sarcini noi, modificări, recurente și sarcinile echipei">Aplicația Sarcini ${SVG(I.ext, 15)}</a>`
+              : '<span>Aplicația Sarcini se pregătește; până atunci sarcinile tale le vezi și le bifezi aici.</span>'}
+            <button type="button" class="ict-b sec ict-vas" title="Închide Tasker și deschide Vasile, care poate da o sarcină unui coleg">Sarcină prin Vasile</button>
+          </div>
         </div>
       </div>`;
     this.append(p);
     p.querySelector('.ict-x').onclick = () => this.inchide();
     p.querySelector('.ict-ref').onclick = () => this._incarca();
+    // Vasile poate da sarcini (cu porțile din Sarcini): Tasker se închide, Vasile se deschide cu începutul cererii scris
+    const v = document.querySelector('icc-vasile');
+    const bv = p.querySelector('.ict-vas');
+    if (!v || typeof v.deschide !== 'function' || !v.querySelector('.icv-fab')) bv.remove();
+    else bv.onclick = async () => { this.inchide(); await v.deschide(); const ta = v.querySelector('.icv-ta'); if (ta && !ta.value) { ta.value = 'Dă o sarcină lui '; ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } };
     this._deseneazaLista();
   }
 }

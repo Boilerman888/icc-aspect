@@ -1,5 +1,11 @@
 # Istoric versiuni
 
+## v1.7.2 – 12.11.2026
+- Vasile și Tasker se ascund reciproc: cât e deschis panoul unuia, butonul celuilalt nu se vede (cerut de Ion pe 12.11).
+- `tasker.js`: în dreapta portretului, patru plăci cu cifre (toate, noi, depășite, azi) care filtrează lista la apăsare;
+  rândul de sus cu cifrele a dispărut (lista are mai mult loc). Butoanele: „Aplicația Sarcini” (tab nou) și
+  „Sarcină prin Vasile” (închide Tasker, deschide Vasile cu „Dă o sarcină lui ” scris; Vasile propune sarcina cu Aprob).
+
 ## v1.7.1 – 12.11.2026 (reparație)
 - `vasile.js`: „×” (Închide) nu mai face același lucru ca „–” (Minimizează). Minimizează (și Esc, Ctrl+J) păstrează conversația;
   Închide încheie conversația (rămâne salvată), iar la următoarea deschidere Vasile pornește de la zero, ca la „Discuție nouă”.

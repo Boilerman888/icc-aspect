@@ -103,6 +103,8 @@ const CSS = `
 .icv-atas button{border:0;background:transparent;padding:0 2px;line-height:1}
 .icv-err{color:var(--icc-destructive-foreground,#b91c1c);font-size:12px}
 @media (min-width:1024px){html.icc-vasile-deschis body{padding-right:494px!important}}
+/* v1.7.2 (Ion 12.11): Tasker deschis → butonul lui Vasile se ascunde (și invers, în tasker.js) */
+html.icc-tasker-deschis .icv-fab,html.icc-tasker-deschis .icv-tip{display:none}
 `;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
