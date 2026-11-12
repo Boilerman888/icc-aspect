@@ -1,6 +1,6 @@
 {
   "name": "icc-aspect",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Aspectul comun al aplicațiilor Instalcorp: tema dashboardcn ca jetoane Tailwind v4 și piesele de ecran (clase), pe versiuni fixe.",
   "license": "MIT",
   "type": "module",

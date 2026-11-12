@@ -2,7 +2,9 @@
 // Închis: fața lui Vasile într-un cerc albastru, în colțul din dreapta-jos (Ctrl+J îl deschide).
 // Deschis: un panou plutitor în dreapta (sus: conversația; jos, 27% din înălțime: portretul, caseta de scris, Fișier, ✦ Opus, Trimite).
 // Cât e deschis, pagina se strânge spre stânga (nu acoperă datele); sub 1024 px panoul ia tot ecranul.
-// Minimizat, conversația rămâne; un răspuns nou aprinde un punct albastru pe buton. „Discuție nouă” începe o conversație curată.
+// Minimizat (butonul –, Esc, Ctrl+J), conversația rămâne; un răspuns nou aprinde un punct albastru pe buton.
+// Închis (butonul ×, v1.7.1): conversația se încheie (rămâne salvată) și la următoarea deschidere Vasile pornește de la zero,
+// ca la „Discuție nouă”, dar fără întrebare. Ion 12.11: „butonul de închide face același lucru ca butonul minimizează”.
 //
 // Panoul doar desenează și trimite: nu are reguli, chei sau date. Tot ce face Vasile (drepturile, uneltele, aprobările)
 // se hotărăște în funcția Supabase „vasile” (ruta ?web), după logarea omului și bifele lui din Portal.
@@ -122,7 +124,7 @@ class IccVasile extends HTMLElement {
     this._redim = () => { const b = this.querySelector('.icv-fab'); if (b) this._aplicaLoc(b, this.querySelector('.icv-tip')); };
     this._tasta = (e) => {
       if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'j' || e.key === 'J')) { if (!this._vizibil) return; e.preventDefault(); this._deschis ? this.inchide() : this.deschide(); }
-      else if (e.key === 'Escape' && this._deschis && this.contains(e.target)) this.inchide();
+      else if (e.key === 'Escape' && this._deschis && this.contains(e.target)) this.inchide(); // Esc = minimizează
     };
   }
   set sb(v) { this._sb = v; if (this.isConnected) this._porneste(); }
@@ -205,6 +207,15 @@ class IccVasile extends HTMLElement {
     this.querySelector('.icv-ta')?.focus();
     if (!this._incarcat) await this._incarca();
     this._canal();
+  }
+  // ×: închide panoul și încheie conversația; următoarea deschidere începe una curată (cea veche rămâne salvată pe server)
+  async termina() {
+    const aveaMesaje = this._mesaje.length > 0 || (this._asteapta || []).length > 0;
+    this.inchide();
+    if (!aveaMesaje || !this._incarcat) return;
+    try { const j = await this._cere({ op: 'discutie_noua' }); this._sesiune = j.sesiune; this._mesaje = []; this._asteapta = []; this._scrie = false; this._eroare = ''; }
+    catch (e) { this._incarcat = false; } // dacă serverul nu răspunde, la deschidere se reîncarcă de la zero
+    if (this._deschis) this.deseneaza();
   }
   inchide() {
     this._deschis = false; ls.set('icc-vasile-deschis', '0');
@@ -465,8 +476,8 @@ class IccVasile extends HTMLElement {
     p.innerHTML = `
       <div class="icv-top"><b>Vasile</b><small>vede doar ce vezi tu</small><span class="icv-sp"></span>
         <button type="button" class="icv-b icv-nou" title="Închide conversația de acum și începe una nouă">${SVG(I.nou, 14)}Discuție nouă</button>
-        <button type="button" class="icv-b icv-min" title="Minimizează (conversația rămâne)" aria-label="Minimizează">${SVG(I.min, 14)}</button>
-        <button type="button" class="icv-b icv-x" title="Închide (Esc)" aria-label="Închide">${SVG(I.x, 14)}</button></div>
+        <button type="button" class="icv-b icv-min" title="Minimizează (Esc): conversația rămâne" aria-label="Minimizează">${SVG(I.min, 14)}</button>
+        <button type="button" class="icv-b icv-x" title="Închide conversația: data viitoare Vasile pornește de la zero (conversația rămâne salvată)" aria-label="Închide conversația">${SVG(I.x, 14)}</button></div>
       <div class="icv-ctx"></div>
       <div class="icv-msgs" aria-live="polite"></div>
       <div class="icv-bot">
@@ -487,7 +498,7 @@ class IccVasile extends HTMLElement {
     this.append(p);
     const ta = p.querySelector('.icv-ta'), inp = p.querySelector('.icv-in');
     p.querySelector('.icv-min').onclick = () => this.inchide();
-    p.querySelector('.icv-x').onclick = () => this.inchide();
+    p.querySelector('.icv-x').onclick = () => this.termina();
     p.querySelector('.icv-nou').onclick = () => this.discutieNoua();
     p.querySelector('.icv-trimite').onclick = () => this.trimite();
     p.querySelector('.icv-fisb').onclick = () => inp.click();
