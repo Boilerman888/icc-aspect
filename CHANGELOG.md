@@ -1,5 +1,9 @@
 # Istoric versiuni
 
+## v1.6.1 – 12.11.2026 (reparație)
+- `vasile.js`: butonul lui Vasile nu mai apare celor pe care serverul îi oprește (`portal.vasile_web_permis()`; decizia lui Ion
+  din 12.11: instalatorii nu au Vasile în aplicații). Dacă verificarea nu răspunde, butonul rămâne, iar serverul refuză la prima cerere.
+
 ## v1.6.0 – 12.11.2026
 - `vasile.js`: butonul rotund al lui Vasile se poate muta (cerut de Ion pe 12.11: pe telefon acoperea butoanele aplicației).
   Apăsare scurtă = deschide discuția; ținut apăsat 1,5 secunde = butonul se ridică (vibrează scurt pe telefon) și se trage

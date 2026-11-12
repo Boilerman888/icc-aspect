@@ -153,7 +153,7 @@ class IccVasile extends HTMLElement {
   }
   _poza(fel) { return this.getAttribute(fel) || POZE + (fel === 'fata' ? 'fata.jpg' : 'portret.jpg'); }
 
-  // butonul apare doar celor logați care au acces în Portal (aceeași listă ca la sigla aplicației)
+  // butonul apare doar celor logați care au acces în Portal (aceeași listă ca la sigla aplicației) și pe care serverul nu-i oprește
   async _porneste() {
     if (this._pornit === this._sb) return;
     this._pornit = this._sb;
@@ -164,6 +164,11 @@ class IccVasile extends HTMLElement {
       this._uid = s.user.id;
       const { data: eu } = await this._sb.schema('portal').rpc('eu');
       this._vizibil = !!eu && (eu.admin || (eu.stare === 'aprobat' && (eu.aplicatii || []).some((a) => a.acces)));
+      // v1.6.1: regula de pe server (azi: instalatorii nu au Vasile în aplicații); la eroare decide tot serverul, la prima cerere
+      if (this._vizibil && !eu.admin) {
+        const { data: ok, error } = await this._sb.schema('portal').rpc('vasile_web_permis');
+        if (!error && ok === false) this._vizibil = false;
+      }
     } catch { this._vizibil = false; }
     this.deseneaza();
     if (this._vizibil && ls.get('icc-vasile-deschis') === '1') this.deschide();
