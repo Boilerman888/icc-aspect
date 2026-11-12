@@ -1,5 +1,19 @@
 # Istoric versiuni
 
+## v1.8.0 – 12.11.2026
+- `tasker.js`: lista e împărțită pe secțiuni (cerut de Ion pe 12.11), în ordinea: Întâlniri azi, Termen azi, Termen depășit,
+  Noi de la colegi, În următoarele 7 zile, Fără termen, Mai târziu, Întâlniri viitoare; la final „Date colegilor”
+  (sarcinile pe care le-ai dat altora și încă nu le-au rezolvat; le vezi, nu le poți bifa în locul lor).
+  Rezolvatele nu apar în widget, doar în aplicația Sarcini.
+- `tasker.js`, doar pe calculator (ecran lat și maus): un singur card cu filtre multiple, pe trei rânduri:
+  Stare (noi, depășite, azi; nimic ales = toate), Tip (de ofertat, de facturat, întâlniri, altele) și De la (create de mine,
+  alocate de colegi, alocate de sistem, date colegilor, recurente). În același rând = oricare; între rânduri = toate.
+  Fiecare buton arată câte sarcini ar rămâne. Pe telefon și tabletă rămân cele patru plăci cu cifre.
+  Necesită `sarcini.widget_mele()` din 12.11 17:35 (câmpurile `a_mea`, `recurenta` și lista `date`).
+- `tasker.js` și `vasile.js`: pe telefon, mutarea butonului pornește după 1 s ținut apăsat (era 1,5 s).
+  Cât muți butonul, apare un cerc punctat „Pune la loc” pe locul inițial; dacă îi dai drumul deasupra lui,
+  butonul revine la loc și uită locul ales.
+
 ## v1.7.2 – 12.11.2026
 - Vasile și Tasker se ascund reciproc: cât e deschis panoul unuia, butonul celuilalt nu se vede (cerut de Ion pe 12.11).
 - `tasker.js`: în dreapta portretului, patru plăci cu cifre (toate, noi, depășite, azi) care filtrează lista la apăsare;
@@ -19,7 +33,7 @@
   Deschis: panou în dreapta, ca la Vasile, cu sarcinile tale nerezolvate (nouă, termen, de la cine, oferta sau contractul),
   bifa „rezolvată” și butonul „Deschide aplicația Sarcini” (tab nou). Datele vin din schema sarcini (`widget_mele`,
   `widget_vazut`, `widget_bifeaza`): fiecare vede și bifează doar sarcinile lui; din widget nu se creează sarcini.
-  Se mută ca Vasile (ținut apăsat 1,5 s); locul e ținut minte pe dispozitiv.
+  Se mută ca Vasile (ținut apăsat 1,5 s; 1 s din v1.8.0); locul e ținut minte pe dispozitiv.
 - `vasile.js`: se dă la stânga lui Tasker (variabila `--icc-tasker-lat`); se închide când se deschide Tasker (și Tasker se închide când se deschide Vasile): nu stau deschiși împreună.
 
 ## v1.6.1 – 12.11.2026 (reparație)

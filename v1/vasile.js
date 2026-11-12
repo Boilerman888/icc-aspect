@@ -47,6 +47,9 @@ const CSS = `
 .icv-fab.icv-muta{transform:scale(1.15);cursor:grabbing;box-shadow:0 0 0 4px color-mix(in srgb,var(--v-pri) 35%,transparent),0 16px 34px rgba(0,0,0,.3);transition:transform .12s}
 @media (max-width:640px){.icv-fab{right:calc(16px + var(--icc-tasker-lat,0px));bottom:16px;width:54px;height:54px;padding:3px}.icv-tip{right:calc(82px + var(--icc-tasker-lat,0px));bottom:30px}}
 @media (hover:none){.icv-tip{display:none}}
+.icv-tinta{position:fixed;z-index:2147482999;border:2px dashed var(--v-pri);border-radius:50%;background:color-mix(in srgb,var(--v-pri) 10%,transparent);pointer-events:none;transition:background .12s,transform .12s}
+.icv-tinta span{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;color:#fff;background:var(--v-pri);padding:3px 8px;border-radius:6px}
+.icv-tinta.aproape{background:color-mix(in srgb,var(--v-pri) 30%,transparent);transform:scale(1.08)}
 .icv-fab i{display:block;width:100%;height:100%;border-radius:50%;background:#ddd center/cover;border:2px solid #fff}
 .icv-fab .icv-dot{position:absolute;right:0;top:0;width:16px;height:16px;border-radius:50%;background:var(--v-pri);border:3px solid var(--v-bg)}
 .icv-tip{position:fixed;right:calc(100px + var(--icc-tasker-lat,0px));bottom:42px;z-index:2147483000;background:var(--v-pri);color:var(--v-pri-fg);padding:6px 10px;border-radius:6px;
@@ -112,7 +115,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const textHtml = (t) => esc(t).replace(/https?:\/\/[^\s<]+[^\s<.,;:!?)\]»”]/g, (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
 const ora = (d) => { try { return new Date(d).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }); } catch { return ''; } };
 const intre = (v, a, b) => Math.max(a, Math.min(b, v));
-const ls = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch { /* fără */ } } };
+const ls = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch { /* fără */ } }, del(k) { try { localStorage.removeItem(k); } catch { /* fără */ } } };
 
 class IccVasile extends HTMLElement {
   static get observedAttributes() { return ['aplicatie', 'sus']; }
@@ -121,7 +124,7 @@ class IccVasile extends HTMLElement {
     this._sb = null; this._vizibil = false; this._deschis = false; this._incarcat = false;
     this._mesaje = []; this._asteapta = []; this._fis = []; this._opus = false; this._areOpus = false;
     this._scrie = false; this._punct = false; this._uid = null; this._sesiune = null; this._eroare = '';
-    // v1.6.0: locul butonului mutat de om (ținut apăsat 1,5 s, apoi tras); distanța față de dreapta-jos, pe dispozitiv
+    // v1.6.0: locul butonului mutat de om (ținut apăsat 1 s din v1.8.0, apoi tras); distanța față de dreapta-jos, pe dispozitiv
     try { const l = JSON.parse(ls.get('icc-vasile-loc') || 'null'); this._loc = l && Number.isFinite(l.r) && Number.isFinite(l.b) ? l : null; } catch { this._loc = null; }
     this._redim = () => { const b = this.querySelector('.icv-fab'); if (b) this._aplicaLoc(b, this.querySelector('.icv-tip')); };
     this._tasta = (e) => {
@@ -408,10 +411,21 @@ class IccVasile extends HTMLElement {
     if (jos || this._asteapta.length) box.scrollTop = box.scrollHeight;
   }
 
-  // Butonul închis: apăsare scurtă = deschide; ținut apăsat 1,5 s = se ridică și se mută cu degetul (sau cu mausul),
+  // Ținta „Pune la loc” (Ion 12.11, v1.8.0): cât muți butonul, un cerc punctat arată locul inițial (în colț sau în stânga
+  // lui Tasker); dacă îi dai drumul deasupra lui, butonul revine la loc și uită locul ales.
+  _arataTinta(b) {
+    const W = document.documentElement.clientWidth || innerWidth, colt = W <= 640 ? 16 : 24;
+    const lat = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--icc-tasker-lat')) || 0;
+    const r = colt + lat, jos = colt, d = b.offsetWidth || 64;
+    const el = document.createElement('div'); el.className = 'icv-tinta'; el.innerHTML = '<span>Pune la loc</span>';
+    Object.assign(el.style, { right: r + 'px', bottom: jos + 'px', width: d + 'px', height: d + 'px' });
+    this.append(el);
+    return { el, cx: W - r - d / 2, cy: innerHeight - jos - d / 2, aproape: false };
+  }
+  // Butonul închis: apăsare scurtă = deschide; ținut apăsat 1 s = se ridică și se mută cu degetul (sau cu mausul),
   // ca să nu acopere butoanele aplicației; locul rămâne ținut minte pe dispozitiv. Tastatura (Enter / Spațiu) deschide.
   _apasare(b, t) {
-    const LUNG = 1500, PRAG = 10;
+    const LUNG = 1000, PRAG = 10;
     let st = null;
     b.addEventListener('pointerdown', (e) => {
       if (e.button !== 0 || st) return;
@@ -420,7 +434,7 @@ class IccVasile extends HTMLElement {
       try { b.setPointerCapture(e.pointerId); } catch { /* fără captură */ }
       st.timer = setTimeout(() => {
         if (!st || st.mod !== 'apasat') return;
-        st.mod = 'muta'; b.classList.add('icv-muta'); if (t) t.style.opacity = '0';
+        st.mod = 'muta'; b.classList.add('icv-muta'); if (t) t.style.opacity = '0'; st.tinta = this._arataTinta(b);
         try { if (navigator.vibrate) navigator.vibrate(30); } catch { /* fără vibrație */ }
       }, LUNG);
     });
@@ -433,13 +447,22 @@ class IccVasile extends HTMLElement {
       const st0 = intre(e.clientX - st.dx, 4, W - w - 4), sus = intre(e.clientY - st.dy, 4, innerHeight - h - 4);
       this._loc = { r: Math.round(W - st0 - w), b: Math.round(innerHeight - sus - h) };
       this._aplicaLoc(b, t);
+      const T = st.tinta;
+      if (T) { const fr = b.getBoundingClientRect(); T.aproape = Math.hypot(fr.left + fr.width / 2 - T.cx, fr.top + fr.height / 2 - T.cy) < 56; T.el.classList.toggle('aproape', T.aproape); }
     });
     const gata = (e, anulat) => {
       if (!st || e.pointerId !== st.id) return;
       clearTimeout(st.timer);
-      const mod = st.mod; st = null;
-      b.classList.remove('icv-muta'); if (t) t.style.opacity = '';
-      if (mod === 'muta') { if (this._loc) ls.set('icc-vasile-loc', JSON.stringify(this._loc)); return; }
+      const mod = st.mod, T = st.tinta; st = null;
+      b.classList.remove('icv-muta'); if (t) t.style.opacity = ''; if (T) T.el.remove();
+      if (mod === 'muta') {
+        if (T && T.aproape) {
+          this._loc = null; ls.del('icc-vasile-loc');
+          b.style.right = b.style.bottom = '';
+          if (t) t.style.left = t.style.right = t.style.bottom = '';
+        } else if (this._loc) ls.set('icc-vasile-loc', JSON.stringify(this._loc));
+        return;
+      }
       if (mod === 'apasat' && !anulat) this.deschide();
     };
     b.addEventListener('pointerup', (e) => gata(e, false));
