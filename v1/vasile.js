@@ -37,16 +37,17 @@ const CSS = `
   --v-surf:var(--icc-surface,#212121);--v-mut:var(--icc-muted-foreground,#969696);--v-bd:var(--icc-border,rgba(237,237,237,.14));--v-acc:var(--icc-accent,rgba(237,237,237,.06))}
 .icv *{box-sizing:border-box}
 .icv button{font:inherit;color:inherit;cursor:pointer}
-.icv-fab{position:fixed;right:24px;bottom:24px;z-index:2147483000;width:64px;height:64px;border-radius:50%;padding:4px;border:0;background:var(--v-pri);
+/* v1.7.0: când e și Tasker pe pagină, el stă în colț și Vasile în stânga lui (tasker.js pune --icc-tasker-lat pe <html>) */
+.icv-fab{position:fixed;right:calc(24px + var(--icc-tasker-lat,0px));bottom:24px;z-index:2147483000;width:64px;height:64px;border-radius:50%;padding:4px;border:0;background:var(--v-pri);
   box-shadow:0 10px 26px color-mix(in srgb,var(--v-pri) 45%,transparent);transition:transform .15s}
 .icv-fab:hover{transform:scale(1.05)}
 .icv-fab{touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 .icv-fab.icv-muta{transform:scale(1.15);cursor:grabbing;box-shadow:0 0 0 4px color-mix(in srgb,var(--v-pri) 35%,transparent),0 16px 34px rgba(0,0,0,.3);transition:transform .12s}
-@media (max-width:640px){.icv-fab{right:16px;bottom:16px;width:54px;height:54px;padding:3px}.icv-tip{right:82px;bottom:30px}}
+@media (max-width:640px){.icv-fab{right:calc(16px + var(--icc-tasker-lat,0px));bottom:16px;width:54px;height:54px;padding:3px}.icv-tip{right:calc(82px + var(--icc-tasker-lat,0px));bottom:30px}}
 @media (hover:none){.icv-tip{display:none}}
 .icv-fab i{display:block;width:100%;height:100%;border-radius:50%;background:#ddd center/cover;border:2px solid #fff}
 .icv-fab .icv-dot{position:absolute;right:0;top:0;width:16px;height:16px;border-radius:50%;background:var(--v-pri);border:3px solid var(--v-bg)}
-.icv-tip{position:fixed;right:100px;bottom:42px;z-index:2147483000;background:var(--v-pri);color:var(--v-pri-fg);padding:6px 10px;border-radius:6px;
+.icv-tip{position:fixed;right:calc(100px + var(--icc-tasker-lat,0px));bottom:42px;z-index:2147483000;background:var(--v-pri);color:var(--v-pri-fg);padding:6px 10px;border-radius:6px;
   font-size:12.5px;font-weight:600;white-space:nowrap;pointer-events:none;opacity:0;transform:translateX(6px);transition:opacity .15s,transform .15s}
 .icv-fab:hover+.icv-tip,.icv-fab:focus-visible+.icv-tip{opacity:1;transform:none}
 .icv-p{position:fixed;top:var(--icv-sus,68px);right:12px;bottom:12px;width:470px;z-index:2147483000;background:var(--v-bg);border:1px solid var(--v-bd);

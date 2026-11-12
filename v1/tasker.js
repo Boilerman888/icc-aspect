@@ -1,6 +1,7 @@
 // icc-aspect v1 – <icc-tasker>: widgetul de sarcini Tasker în aplicațiile Instalcorp (Ion, 12.11.2026).
-// Închis: fața lui Tasker într-un cerc mov, jos în dreapta, lângă Vasile; în dreapta feței, contorul sarcinilor:
+// Închis: fața lui Tasker într-un cerc mov, în colțul din dreapta-jos (Vasile stă în stânga lui); în dreapta feței, contorul:
 //   „noi/total” pe roșu când un coleg ți-a dat ceva nou de la ultima deschidere, altfel doar totalul (aceeași regulă ca în Oferte).
+//   Cât ai sarcini noi nevăzute, fața pulsează, DOAR pe calculator (ecran de cel puțin 1024 px și maus); pe telefon nu.
 // Deschis: panou plutitor în dreapta, ca la Vasile: sarcinile tale nerezolvate, bifa „rezolvată” și butonul care deschide
 //   aplicația Sarcini într-un tab nou. Tasker și Vasile nu stau deschiși împreună: deschizi unul, celălalt se închide.
 //
@@ -48,6 +49,12 @@ const CSS = `
   background:var(--t-bg);color:var(--t-mov);box-shadow:0 0 0 1px var(--t-bd),0 4px 12px rgba(0,0,0,.12)}
 .ict-nr.noi{background:var(--t-rosu);color:#fff;box-shadow:0 4px 12px rgba(220,38,38,.35)}
 .ict-nr.zero{color:var(--t-mut)}
+/* sarcină nouă: avatarul pulsează, DOAR pe calculator (ecran lat + maus); pe telefon și tabletă rămâne doar contorul roșu */
+@keyframes ict-puls{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--t-mov) 65%,transparent),0 10px 26px color-mix(in srgb,var(--t-mov) 45%,transparent)}
+  70%{box-shadow:0 0 0 16px color-mix(in srgb,var(--t-mov) 0%,transparent),0 10px 26px color-mix(in srgb,var(--t-mov) 45%,transparent)}
+  100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--t-mov) 0%,transparent),0 10px 26px color-mix(in srgb,var(--t-mov) 45%,transparent)}}
+@media (min-width:1024px) and (hover:hover) and (pointer:fine){.ict-fab.ict-puls{animation:ict-puls 1.6s ease-out infinite}}
+@media (prefers-reduced-motion:reduce){.ict-fab.ict-puls{animation:none}}
 @media (max-width:640px){.ict-grp{right:16px;bottom:16px}.ict-fab{width:54px;height:54px;padding:3px}}
 .ict-p{position:fixed;top:var(--ict-sus,68px);right:12px;bottom:12px;width:470px;z-index:2147483000;background:var(--t-bg);border:1px solid var(--t-bd);
   border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.16);display:flex;flex-direction:column;overflow:hidden}
@@ -123,9 +130,6 @@ class IccTasker extends HTMLElement {
     window.addEventListener('icc-vasile', this._laVasile);
     window.addEventListener('tasks-changed', this._reincarca);
     window.addEventListener('focus', this._reincarca);
-    // butonul lui Vasile apare după logare (asincron): când apare sau dispare, Tasker își mută locul lângă el
-    this._obs = new MutationObserver(() => { if (this._raf) return; this._raf = requestAnimationFrame(() => { this._raf = 0; this._aplicaLoc(); }); });
-    this._obs.observe(document.body, { childList: true, subtree: true });
     if (this._sb) this._porneste();
   }
   disconnectedCallback() {
@@ -134,7 +138,7 @@ class IccTasker extends HTMLElement {
     window.removeEventListener('icc-vasile', this._laVasile);
     window.removeEventListener('tasks-changed', this._reincarca);
     window.removeEventListener('focus', this._reincarca);
-    this._obs?.disconnect(); clearInterval(this._ceas); this._pagina(false);
+    clearInterval(this._ceas); this._pagina(false); this._anuntaLat(0);
   }
   attributeChangedCallback(n) { if (n === 'sus') this.style.setProperty('--ict-sus', (Number(this.getAttribute('sus')) || 68) + 'px'); }
   _poza(fel) { return this.getAttribute(fel) || POZE + (fel === 'fata' ? 'fata.jpg' : 'portret.jpg'); }
@@ -213,22 +217,21 @@ class IccTasker extends HTMLElement {
     this.deseneaza(true);
   }
 
-  // ---- locul butonului: lângă Vasile (în stânga lui) sau în colț când Vasile lipsește; mutat de om = locul lui ----
+  // ---- locul butonului (Ion 12.11): Tasker stă în colțul din dreapta-jos, iar Vasile în stânga lui. Tasker își anunță
+  // lățimea în variabila --icc-tasker-lat de pe <html>, iar vasile.js ≥ 1.7.0 se dă la stânga cu atât. Mutat de om = locul lui
+  // (atunci Vasile rămâne în colț). Cât e panoul Tasker deschis, Vasile rămâne pe loc, ca să poată fi apăsat.
+  _anuntaLat(px) {
+    const s = document.documentElement.style, v = px ? px + 'px' : '';
+    if (s.getPropertyValue('--icc-tasker-lat') !== v) { if (v) s.setProperty('--icc-tasker-lat', v); else s.removeProperty('--icc-tasker-lat'); }
+  }
   _aplicaLoc() {
+    if (!this._vizibil || this._loc) this._anuntaLat(0);
     const g = this.querySelector('.ict-grp'); if (!g) return;
     const W = document.documentElement.clientWidth || innerWidth, w = g.offsetWidth || 120, h = g.offsetHeight || 64;
-    let r, jos;
+    const colt = W <= 640 ? 16 : 24;
+    let r = colt, jos = colt;
     if (this._loc) { r = this._loc.r; jos = this._loc.b; }
-    else {
-      const v = document.querySelector('icc-vasile .icv-fab');
-      const tel = W <= 640, colt = tel ? 16 : 24;
-      jos = colt;
-      if (v && v.getClientRects().length) {
-        const rv = v.getBoundingClientRect();
-        const vasileInColt = Math.abs(W - rv.right - colt) < 6 && Math.abs(innerHeight - rv.bottom - colt) < 6;
-        r = vasileInColt ? colt + rv.width + 12 : colt;
-      } else r = colt;
-    }
+    else if (g.getClientRects().length) { this._lat = Math.round(w + 12); this._anuntaLat(this._lat); }
     r = intre(r, 4, Math.max(4, W - w - 4)); jos = intre(jos, 4, Math.max(4, innerHeight - h - 4));
     if (g.style.right !== r + 'px') g.style.right = r + 'px';
     if (g.style.bottom !== jos + 'px') g.style.bottom = jos + 'px';
@@ -322,11 +325,11 @@ class IccTasker extends HTMLElement {
   deseneaza(doarLista) {
     if (doarLista && this._deschis && this.querySelector('.ict-p')) { this._deseneazaLista(); return; }
     this.replaceChildren();
-    if (!this._vizibil) return;
+    if (!this._vizibil) { this._anuntaLat(0); return; }
     if (!this._deschis) {
       const c = this._textContor();
       const g = document.createElement('div'); g.className = 'ict-grp';
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'ict-fab';
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'ict-fab' + (this._d.noi > 0 ? ' ict-puls' : '');
       b.setAttribute('aria-label', 'Deschide sarcinile (Tasker): ' + c.titlu); b.title = 'Tasker · ' + c.titlu;
       b.innerHTML = `<i style="background-image:url('${esc(this._poza('fata'))}')"></i>`;
       const n = document.createElement('button'); n.type = 'button'; n.className = 'ict-nr' + c.cls; n.textContent = c.text; n.title = c.titlu;
