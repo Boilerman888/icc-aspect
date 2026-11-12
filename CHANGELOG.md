@@ -1,5 +1,11 @@
 # Istoric versiuni
 
+## v1.6.0 – 12.11.2026
+- `vasile.js`: butonul rotund al lui Vasile se poate muta (cerut de Ion pe 12.11: pe telefon acoperea butoanele aplicației).
+  Apăsare scurtă = deschide discuția; ținut apăsat 1,5 secunde = butonul se ridică (vibrează scurt pe telefon) și se trage
+  cu degetul sau cu mausul oriunde pe ecran. Locul rămâne ținut minte pe acel dispozitiv; nu iese niciodată din ecran.
+  Pe telefon butonul e puțin mai mic (54 px) și mai aproape de colț; eticheta „Vasile · Ctrl J” apare doar unde există maus.
+
 ## v1.5.1 – 12.11.2026 (reparație)
 - `vasile.js`: pe ecranele înalte (de la ~1080 px), portretul pătrat lua prea mult loc și butonul „Trimite” ieșea din panou
   (tăiat în dreapta, iar panoul se putea deplasa lateral). Coloana cu caseta și butoanele are acum minimum 248 px; portretul se strânge.
