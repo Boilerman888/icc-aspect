@@ -1,5 +1,10 @@
 # Istoric versiuni
 
+## v1.8.1 – 13.11.2026 (reparație)
+- `tasker.js`, cardul de filtre de pe calculator (cerut de Ion pe 13.11): butoanele sunt așezate pe coloane egale, cu cifra sus
+  și numele jos, ca plăcile de pe telefon; fiecare rând are titlul deasupra (Stare, Tip, Origine). Primul buton e „toate”:
+  arată câte sarcini ai în total și șterge toate filtrele. Numele întreg al fiecărui filtru apare când ții mausul pe el.
+
 ## v1.8.0 – 12.11.2026
 - `tasker.js`: lista e împărțită pe secțiuni (cerut de Ion pe 12.11), în ordinea: Întâlniri azi, Termen azi, Termen depășit,
   Noi de la colegi, În următoarele 7 zile, Fără termen, Mai târziu, Întâlniri viitoare; la final „Date colegilor”

@@ -98,22 +98,25 @@ const CSS = `
 .ict-k:hover:not(:disabled){background:var(--t-acc)}.ict-k:disabled{opacity:.45;cursor:default}
 .ict-k[aria-pressed=true]{border-color:var(--t-mov);box-shadow:0 0 0 2px color-mix(in srgb,var(--t-mov) 30%,transparent)}
 .ict-k span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
-.ict-fc{border:1px solid var(--t-bd);border-radius:8px;background:var(--t-card);padding:6px 8px;display:flex;flex-direction:column;gap:5px}
-.ict-fr{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
-.ict-fr>i{font-style:normal;width:44px;flex-shrink:0;font-size:11px;color:var(--t-mut);text-transform:uppercase;letter-spacing:.03em}
-.ict-ch{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 7px;border-radius:6px;border:1px solid var(--t-bd);background:var(--t-bg);
-  font-size:12px;color:var(--t-fg);white-space:nowrap}
-.ict-ch b{font-weight:700;font-variant-numeric:tabular-nums;color:var(--t-mut)}
+.ict-fc{border:1px solid var(--t-bd);border-radius:8px;background:var(--t-card);padding:7px 8px 8px;display:flex;flex-direction:column;gap:6px}
+/* v1.8.1 (Ion 13.11): fiecare rând = titlu mic + plăci egale pe coloane (cifra sus, numele jos), ca pe telefon; „toate” resetează filtrele */
+.ict-fr{display:flex;flex-direction:column;gap:3px}
+.ict-fr>i{font-style:normal;font-size:10.5px;font-weight:600;color:var(--t-mut);text-transform:uppercase;letter-spacing:.04em}
+.ict-fg{display:grid;gap:4px}
+.ict-ch{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;min-height:38px;padding:3px 1px;border-radius:6px;
+  border:1px solid var(--t-bd);background:var(--t-bg);font-size:11px;line-height:1.1;color:var(--t-mut);text-align:center}
+.ict-ch b{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--t-fg)}
+.ict-ch span{max-width:100%;font-size:10.5px;letter-spacing:-.01em}
 .ict-ch.r b{color:var(--t-rosu)}.ict-ch.g b{color:var(--t-gal)}
 .ict-ch:hover:not(:disabled){background:var(--t-acc)}.ict-ch:disabled{opacity:.4;cursor:default}
-.ict-ch[aria-pressed=true]{border-color:var(--t-mov);background:color-mix(in srgb,var(--t-mov) 12%,var(--t-bg));color:var(--t-mov)}
+.ict-ch[aria-pressed=true]{border-color:var(--t-mov);background:color-mix(in srgb,var(--t-mov) 12%,var(--t-bg));color:var(--t-mov);box-shadow:0 0 0 1px var(--t-mov) inset}
 .ict-ch[aria-pressed=true] b{color:var(--t-mov)}
 .ict-btns{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .ict-btns .ict-b{flex:1 1 auto}
 .ict-col .ict-b.pri{height:32px;font-size:13px;font-weight:600;padding:0 12px}
 .ict-col .ict-b.sec{height:32px;color:var(--t-fg)}
 .ict-p.pc .ict-bot{height:auto;min-height:0}
-.ict-p.pc .ict-por{height:auto;width:150px;aspect-ratio:auto;flex-shrink:0}
+.ict-p.pc .ict-por{height:auto;width:96px;aspect-ratio:auto;flex-shrink:0}
 .ict-fil{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin:8px 14px 0;font-size:12px;color:var(--t-mut);flex-shrink:0}
 .ict-fil button{border:0;background:none;padding:0;color:var(--t-mov);text-decoration:underline;font-size:12px}
 /* secțiunile listei */
@@ -392,15 +395,22 @@ class IccTasker extends HTMLElement {
     if (PC.matches && fc) {
       // cifra de pe fiecare buton = câte ar rămâne dacă îl apeși, cu celelalte rânduri cum sunt alese acum
       const cate = (rand, test, cuDate) => (cuDate ? [...mele, ...date] : mele).filter((t) => test(t) && this._treceFiltre(t, rand)).length;
+      // fiecare rând: [cheie, titlu, coloane, plăci]; placă = [cheie, nume scurt, nume întreg, culoare, test]
       const R = [
-        ['stare', 'Stare', [['noi', 'noi', 'r', (t) => this._noiAfisate.has(t.id)], ['dep', 'depășite', 'r', (t) => stareTermen(t) === 'dep'], ['azi', 'azi', 'g', (t) => stareTermen(t) === 'azi']]],
-        ['tip', 'Tip', [['ofertare', 'de ofertat', '', (t) => TIP(t) === 'ofertare'], ['facturare', 'de facturat', '', (t) => TIP(t) === 'facturare'], ['intalnire', 'întâlniri', '', (t) => TIP(t) === 'intalnire'], ['altele', 'altele', '', (t) => TIP(t) === 'altele']]],
-        ['dela', 'De la', [['mine', 'create de mine', '', (t) => DE_LA(t) === 'mine'], ['colegi', 'alocate de colegi', '', (t) => DE_LA(t) === 'colegi'], ['sistem', 'alocate de sistem', '', (t) => DE_LA(t) === 'sistem'], ['rec', 'recurente', '', (t) => !!t.recurenta], ['date', 'date colegilor', '', (t) => !!t.dat]]],
+        ['stare', 'Stare', 4, [['noi', 'noi', 'Noi de la colegi', 'r', (t) => this._noiAfisate.has(t.id)], ['dep', 'depășite', 'Termen depășit', 'r', (t) => stareTermen(t) === 'dep'], ['azi', 'azi', 'Termen azi', 'g', (t) => stareTermen(t) === 'azi']]],
+        ['tip', 'Tip', 4, [['ofertare', 'de ofertat', 'De ofertat', '', (t) => TIP(t) === 'ofertare'], ['facturare', 'de facturat', 'De facturat', '', (t) => TIP(t) === 'facturare'], ['intalnire', 'întâlniri', 'Întâlniri', '', (t) => TIP(t) === 'intalnire'], ['altele', 'altele', 'Altele (generale)', '', (t) => TIP(t) === 'altele']]],
+        ['dela', 'Origine', 5, [['mine', 'create<br>de mine', 'Create de mine, pentru mine', '', (t) => DE_LA(t) === 'mine'], ['colegi', 'de la<br>colegi', 'Alocate de colegi', '', (t) => DE_LA(t) === 'colegi'], ['sistem', 'de la<br>sistem', 'Alocate de sistem (automat)', '', (t) => DE_LA(t) === 'sistem'], ['rec', 'sarcini<br>recurente', 'Recurente', '', (t) => !!t.recurenta], ['date', 'date<br>colegilor', 'Date colegilor: sarcinile pe care le-ai dat altora și nu le-au rezolvat', '', (t) => !!t.dat]]],
       ];
-      fc.innerHTML = R.map(([rand, et, ch]) => `<div class="ict-fr" role="group" aria-label="${et}"><i>${et}</i>`
-        + ch.map(([k, txt, cl, test]) => { const n = cate(rand, test, rand === 'dela' && k === 'date'); const on = this._f[rand].has(k);
-          return `<button type="button" class="ict-ch ${n ? cl : ''}" data-r="${rand}" data-k="${k}" aria-pressed="${on}"${!n && !on ? ' disabled' : ''}>${txt} <b>${n}</b></button>`; }).join('') + '</div>').join('');
-      fc.querySelectorAll('.ict-ch').forEach((b) => { b.onclick = () => { const S = this._f[b.dataset.r]; S.has(b.dataset.k) ? S.delete(b.dataset.k) : S.add(b.dataset.k); this._deseneazaLista(); }; });
+      const nimic = !(this._f.stare.size + this._f.tip.size + this._f.dela.size);
+      const placa = (rand, k, txt, tit, cl, n, on, dez) => `<button type="button" class="ict-ch ${n ? cl : ''}" data-r="${rand}" data-k="${k}" title="${esc(tit)}" aria-pressed="${on}"${dez ? ' disabled' : ''}><b>${n}</b><span>${txt}</span></button>`;
+      fc.innerHTML = R.map(([rand, et, col, ch]) => `<div class="ict-fr" role="group" aria-label="${et}"><i>${et}</i><div class="ict-fg" style="grid-template-columns:repeat(${col},minmax(0,1fr))">`
+        + (rand === 'stare' ? placa('', 'toate', 'toate', 'Toate sarcinile: șterge toate filtrele', '', mele.length, nimic, false) : '')
+        + ch.map(([k, txt, tit, cl, test]) => { const n = cate(rand, test, rand === 'dela' && k === 'date'); const on = this._f[rand].has(k);
+          return placa(rand, k, txt, tit, cl, n, on, !n && !on); }).join('') + '</div></div>').join('');
+      fc.querySelectorAll('.ict-ch').forEach((b) => { b.onclick = () => {
+        if (b.dataset.k === 'toate') this._f = { stare: new Set(), tip: new Set(), dela: new Set() };
+        else { const S = this._f[b.dataset.r]; S.has(b.dataset.k) ? S.delete(b.dataset.k) : S.add(b.dataset.k); }
+        this._deseneazaLista(); }; });
     } else if (st) {
       const nr = { toate: mele.length, noi: mele.filter((t) => this._noiAfisate.has(t.id)).length, dep: mele.filter((t) => stareTermen(t) === 'dep').length, azi: mele.filter((t) => stareTermen(t) === 'azi').length };
       if (this._filtru !== 'toate' && !nr[this._filtru]) this._filtru = 'toate';
