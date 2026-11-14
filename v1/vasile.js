@@ -18,6 +18,8 @@
 // Evenimente: pe window, „icc-vasile” cu detail { deschis } (ex. Service ascunde harta cât e deschis);
 // pe <html> clasa „icc-vasile-deschis” cât e deschis.
 
+import { pazaMfa } from './mfa.js'; // codul de pe telefon (MFA), Ion 14.11.2026
+
 const POZE = 'https://apps.instalcorp.ro/vasile/';
 const NUME_APL = { oferte: 'Oferte', clienti: 'Clienți', calendar: 'Calendar', instalatii: 'Instalații', service: 'Service', ops: 'OPS',
   rsvti: 'RSVTI', gaze: 'Centralizator gaze', sarcini: 'Sarcini', personal: 'Personal', cashflow: 'Cash Flow', subcontractori: 'Subcontractori',
@@ -132,7 +134,7 @@ class IccVasile extends HTMLElement {
       else if (e.key === 'Escape' && this._deschis && this.contains(e.target)) this.inchide(); // Esc = minimizează
     };
   }
-  set sb(v) { this._sb = v; if (this.isConnected) this._porneste(); }
+  set sb(v) { this._sb = v; pazaMfa(v); if (this.isConnected) this._porneste(); }
   get sb() { return this._sb; }
   set context(v) { this._ctx = v; if (this._deschis) this._deseneazaCtx(); }
   get context() { return this._ctx; }
