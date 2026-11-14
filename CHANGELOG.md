@@ -1,5 +1,11 @@
 # Istoric versiuni
 
+## v1.9.0 – 14.11.2026
+- `mfa.js` (nou): codul de pe telefon (MFA). `pazaMfa(sb)` arată fereastra „Codul de pe telefon” peste aplicație când contul are codul activat
+  și sesiunea e doar cu parolă; `activareMfa(sb, element)` = activarea cu cod QR (Portal, doar administratorul).
+  Pornită singură de `<icc-tasker>`, `<icc-vasile>` și `<icc-aplicatie>` când primesc clientul Supabase: aplicațiile doar urcă versiunea.
+  Conturile fără cod activat nu văd nimic nou. Lacătul adevărat e în bază (portal.cere_mfa, platforma-icc).
+
 ## v1.8.1 – 13.11.2026 (reparație)
 - `tasker.js`, cardul de filtre de pe calculator (cerut de Ion pe 13.11): butoanele sunt așezate pe coloane egale, cu cifra sus
   și numele jos, ca plăcile de pe telefon; fiecare rând are titlul deasupra (Stare, Tip, Origine). Primul buton e „toate”:

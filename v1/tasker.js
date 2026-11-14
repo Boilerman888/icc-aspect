@@ -17,6 +17,8 @@
 // Evenimente: pe window „icc-tasker” cu detail { deschis }; pe <html> clasa „icc-tasker-deschis” cât e deschis.
 // Ascultă „tasks-changed” (Oferte îl trimite când se schimbă o sarcină) și se reîncarcă.
 
+import { pazaMfa } from './mfa.js'; // codul de pe telefon (MFA), Ion 14.11.2026
+
 const POZE = 'https://apps.instalcorp.ro/tasker/';
 const OFERTE = 'https://oferte.instalcorp.ro/';
 const SVG = (d, w = 16) => `<svg viewBox="0 0 24 24" width="${w}" height="${w}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
@@ -181,7 +183,7 @@ class IccTasker extends HTMLElement {
     this._laVasile = (e) => { if (e.detail?.deschis && this._deschis) this.inchide(); this._aplicaLoc(); };
     this._reincarca = () => this._incarca();
   }
-  set sb(v) { this._sb = v; if (this.isConnected) this._porneste(); }
+  set sb(v) { this._sb = v; pazaMfa(v); if (this.isConnected) this._porneste(); }
   get sb() { return this._sb; }
 
   connectedCallback() {

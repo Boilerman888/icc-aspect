@@ -9,6 +9,7 @@
 // <icc-utilizator nume="Ion Zaifu" detaliu="ion@… · Admin" versiune="Oferte 2.4" [fara-biblioteca]>
 //   proprietăți: .elemente = [{ label, href, onClick, nou } sau { titlu }] (null-urile se sar), .onIesi = () => …   (sau evenimentul „iesire”)
 import { cx, popover, menuItem } from './ui.js';
+import { pazaMfa } from './mfa.js'; // codul de pe telefon (MFA), Ion 14.11.2026
 
 const PORTAL = 'https://apps.instalcorp.ro/';
 const BIBLIOTECA = PORTAL + 'biblioteca/';
@@ -44,7 +45,7 @@ class IccAplicatie extends Derulant {
   static get observedAttributes() { return ['nume', 'acasa', 'cod', 'sigla-luminoasa', 'sigla-intunecata']; }
   set aplicatii(v) { this._apl = Array.isArray(v) ? v : null; if (this.isConnected) this.deseneaza(); }
   get aplicatii() { return this._apl; }
-  set sb(v) { this._sb = v; if (this.isConnected) this.deseneaza(); }
+  set sb(v) { this._sb = v; pazaMfa(v); if (this.isConnected) this.deseneaza(); }
   get sb() { return this._sb; }
   async incarca() {
     if (this._apl || !this._sb || this._incarc) return;
