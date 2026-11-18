@@ -27,6 +27,7 @@ const CSS = `
 .icc-doc .ict-nr:not(.noi){display:none}
 /* antetul nu încape (telefoane înguste, ex. Android de 360 px): Tasker se așază peste marginea lui Vasile, apoi amândoi se micșorează */
 .icc-doc.strans{gap:0;margin-right:4px}.icc-doc.minim{gap:0;margin-right:2px}
+.icc-doc.strans .ict-nr,.icc-doc.minim .ict-nr{right:-3px;top:-5px;height:14px;min-width:14px;padding:0 3px;font-size:9.5px}
 .icc-doc.strans .ict-grp{margin-left:-6px}.icc-doc.minim .ict-grp{margin-left:-9px}
 .icc-doc.strans .icv-fab,.icc-doc.strans .ict-fab{width:28px;height:28px}
 .icc-doc.minim .icv-fab,.icc-doc.minim .ict-fab{width:26px;height:26px;padding:1.5px}
@@ -68,6 +69,19 @@ function strange(d) {
   const jos = () => { let m = 0; if (hdr) for (const e of hdr.querySelectorAll('button, a, input, icc-aplicatie')) if (vis(e) && !e.closest('[role=menu], nav, .icc-doc')) m = Math.max(m, e.getBoundingClientRect().bottom); return m; };
   // lățimea ecranului din media query (nu din pagină: pe telefon, o pagină prea lată „umflă” innerWidth și ar ascunde depășirea)
   const W = latimeEcran();
+  // butoane / linkuri ale aplicației care se calcă unul pe altul (ex. numele aplicației strâns sub butonul vecin)
+  const suprapuse = () => {
+    if (!hdr) return 0;
+    const el = [...hdr.querySelectorAll('button, a')].filter((e) => vis(e) && !e.closest('[role=menu], nav, .icc-doc'))
+      .map((e) => [e, e.getBoundingClientRect()]);
+    let n = 0;
+    for (let i = 0; i < el.length; i++) for (let j = i + 1; j < el.length; j++) {
+      const [a, p] = el[i], [b, q] = el[j];
+      if (a.contains(b) || b.contains(a)) continue;
+      if (q.right > p.left + 2 && q.left < p.right - 2 && q.bottom > p.top + 2 && q.top < p.bottom - 2) n++;
+    }
+    return n;
+  };
   const dreapta = () => { let m = 0; if (hdr) for (const e of hdr.querySelectorAll('button, a, icc-utilizator')) if (vis(e) && !e.closest('[role=menu]')) m = Math.max(m, e.getBoundingClientRect().right); return m; };
   // pe telefon, o pagină care depășește „umflă” lățimea paginii și antetul se lățește cu ea; ca să vedem dacă încape cu adevărat,
   // fixăm antetul, cât măsurăm, la lățimea ecranului
@@ -75,11 +89,11 @@ function strange(d) {
   if (hdr) { hdr.style.boxSizing = 'border-box'; hdr.style.width = hdr.style.maxWidth = W + 'px'; }
   const st = hdr ? hdr.getBoundingClientRect().left : 0;
   d.style.display = 'none';
-  const j0 = jos(), r0 = dreapta();
+  const j0 = jos(), r0 = dreapta(), s0 = suprapuse();
   d.style.display = '';
   // dacă antetul depășea ecranul și fără butoane, nu e vina noastră: atunci doar nu-l facem mai lat decât era
   const lim = Math.max(st + W, r0);
-  const nuIncape = () => jos() > j0 + 2 || dreapta() > lim + 0.5;
+  const nuIncape = () => jos() > j0 + 2 || dreapta() > lim + 0.5 || suprapuse() > s0;
   try {
     if (!nuIncape()) return;
     d.classList.add('strans');
