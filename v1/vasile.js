@@ -19,6 +19,7 @@
 // pe <html> clasa „icc-vasile-deschis” cât e deschis.
 
 import { pazaMfa } from './mfa.js'; // codul de pe telefon (MFA), Ion 14.11.2026
+import { TELEFON, aseaza, bineAsezat } from './doc.js'; // v1.10.0: pe telefon, butonul stă în antet (Ion, 18.11.2026)
 
 const POZE = 'https://apps.instalcorp.ro/vasile/';
 const NUME_APL = { oferte: 'Oferte', clienti: 'Clienți', calendar: 'Calendar', instalatii: 'Instalații', service: 'Service', ops: 'OPS',
@@ -136,6 +137,7 @@ class IccVasile extends HTMLElement {
   }
   set sb(v) { this._sb = v; pazaMfa(v); if (this.isConnected) this._porneste(); }
   get sb() { return this._sb; }
+  get vizibil() { return this._vizibil; }
   set context(v) { this._ctx = v; if (this._deschis) this._deseneazaCtx(); }
   get context() { return this._ctx; }
 
@@ -149,6 +151,14 @@ class IccVasile extends HTMLElement {
     // v1.7.0: Tasker (widgetul de sarcini) se deschide → Vasile se închide; nu stau deschiși împreună (Ion, 12.11.2026)
     this._laTasker = (e) => { if (e.detail?.deschis && this._deschis) this.inchide(); };
     window.addEventListener('icc-tasker', this._laTasker);
+    // v1.10.0: pe telefon butonul stă în antet; dacă aplicația redesenează antetul sau ecranul se lățește, îl reașezăm
+    this._tel = () => { if (this._vizibil && !this._deschis) this.deseneaza(); };
+    TELEFON.addEventListener?.('change', this._tel);
+    this._paza = setInterval(() => {
+      if (!this._vizibil || this._deschis) return;
+      const b = this._fabExt || this.querySelector('.icv-fab');
+      if (b && !bineAsezat(b)) this.deseneaza();
+    }, 1500);
     if (this._sb) this._porneste();
   }
   disconnectedCallback() {
@@ -156,6 +166,8 @@ class IccVasile extends HTMLElement {
     window.removeEventListener('resize', this._redim);
     window.removeEventListener('hashchange', this._hash);
     window.removeEventListener('icc-tasker', this._laTasker);
+    TELEFON.removeEventListener?.('change', this._tel); clearInterval(this._paza);
+    if (this._fabExt) { this._fabExt.remove(); this._fabExt = null; }
     this._opresteCanal(); this._pagina(false);
   }
   attributeChangedCallback(n) { if (n === 'sus') this.style.setProperty('--icv-sus', (Number(this.getAttribute('sus')) || 68) + 'px'); }
@@ -488,11 +500,19 @@ class IccVasile extends HTMLElement {
   deseneaza(doarMesaje) {
     if (doarMesaje && this._deschis && this.querySelector('.icv-p')) { this._deseneazaMesaje(); this._deseneazaJos(); return; }
     this.replaceChildren();
+    if (this._fabExt) { this._fabExt.remove(); this._fabExt = null; }
     if (!this._vizibil) return;
     if (!this._deschis) {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'icv-fab';
       b.setAttribute('aria-label', 'Deschide asistentul Vasile (Ctrl+J)');
       b.innerHTML = `<i style="background-image:url('${esc(this._poza('fata'))}')"></i>${this._punct ? '<span class="icv-dot" title="Răspuns nou"></span>' : ''}`;
+      // v1.10.0 (Ion 18.11.2026, varianta A): pe telefon, butonul mic în antet, lângă cercul cu inițiale; o atingere îl deschide
+      if (aseaza(b)) {
+        this._fabExt = b; b.classList.add('icv'); // culorile lui Vasile (variabilele --v-*) și în afara componentei
+        b.onclick = () => this.deschide();
+        b.addEventListener('contextmenu', (e) => e.preventDefault());
+        return;
+      }
       const t = document.createElement('div'); t.className = 'icv-tip'; t.textContent = 'Vasile · Ctrl J';
       this.append(b, t);
       this._aplicaLoc(b, t);
