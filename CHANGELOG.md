@@ -1,5 +1,15 @@
 # Istoric versiuni
 
+## v1.10.0 – 18.11.2026
+- Pe telefon (ecran sub 640 px, ținut în picioare, sau telefon culcat), butoanele lui Vasile și Tasker nu mai plutesc în colțul
+  din dreapta-jos (acopereau „Salvează”, barele de jos și finalul fișelor): stau mici (30 px) în antet, chiar în stânga cercului
+  cu inițiale (varianta A aleasă de Ion pe 18.11). Cifra roșie de pe Tasker arată sarcinile noi; fără sarcini noi nu apare nicio cifră.
+  Cine nu are Tasker vede doar butonul lui Vasile. O atingere deschide panoul, ca până acum.
+- Dacă antetul nu încape pe un rând (telefoane înguste, de 360–375 px), Tasker se așază peste marginea lui Vasile și, la nevoie,
+  amândoi se micșorează (28, apoi 26 px). Se verifică din nou la rotirea telefonului și când aplicația își completează antetul.
+- Pe tabletă și pe calculator nu se schimbă nimic. Dacă cercul cu inițiale nu se vede (ex. ecranul de intrare), butoanele rămân plutitoare.
+- `doc.js` (nou): locul din antet; `cont.js` păstrează locul când redesenează cercul cu inițiale. Aplicațiile doar urcă versiunea.
+
 ## v1.9.0 – 14.11.2026
 - `mfa.js` (nou): codul de pe telefon (MFA). `pazaMfa(sb)` arată fereastra „Codul de pe telefon” peste aplicație când contul are codul activat
   și sesiunea e doar cu parolă; `activareMfa(sb, element)` = activarea cu cod QR (Portal, doar administratorul).

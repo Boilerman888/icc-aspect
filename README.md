@@ -15,8 +15,9 @@ Tema vine din [dashboardcn](https://github.com/NoahGdev/dashboardcn) (MIT), adap
 | `v1/antet.js` | Antetul aplicației (bandă → pastilă la derulare, meniu pe telefon, comutator zi/noapte) | aplicațiile Preact |
 | `v1/clasic.css` | Tema ICC v2 pentru clasele vechi (culori, câmpuri, liste, carduri, tabele, ferestre); se importă în stratul `legacy` | aplicațiile Preact cu stiluri vechi |
 | `v1/punte.css` | Aduce paginile vechi (clasele din style.css / tema-icc) la regulile aspectului; vezi REGULI.md | aplicațiile Preact cu stiluri vechi |
-| `v1/vasile.js` | `<icc-vasile aplicatie="…">`: asistentul AI Vasile (fața în colț, panoul plutitor); se dă `el.sb = supabase`, opțional `el.context`; are stilurile lui | toate aplicațiile |
+| `v1/vasile.js` | `<icc-vasile aplicatie="…">`: asistentul AI Vasile (fața în colț pe tabletă și calculator, mică în antet pe telefon; panoul plutitor); se dă `el.sb = supabase`, opțional `el.context`; are stilurile lui | toate aplicațiile |
 | `v1/tasker.js` | `<icc-tasker aplicatie="…">`: widgetul de sarcini Tasker (fața + contorul x/y lângă Vasile, panoul cu sarcinile mele, butonul spre aplicația Sarcini); se dă `el.sb = supabase`; are stilurile lui; exclusiv cu Vasile | toate aplicațiile cu logarea comună |
+| `v1/doc.js` | Locul din antet pentru Vasile și Tasker pe telefon (în stânga lui `<icc-utilizator>`); îl folosesc singure `vasile.js` și `tasker.js` | intern |
 
 Noaptea se aprinde cu `data-theme="dark"` pe `<html>` (pus de `tema-icc.js` al fiecărei aplicații) sau cu clasa `.dark`.
 

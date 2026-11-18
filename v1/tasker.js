@@ -17,6 +17,7 @@
 // Evenimente: pe window „icc-tasker” cu detail { deschis }; pe <html> clasa „icc-tasker-deschis” cât e deschis.
 // Ascultă „tasks-changed” (Oferte îl trimite când se schimbă o sarcină) și se reîncarcă.
 
+import { TELEFON, aseaza, bineAsezat } from './doc.js'; // v1.10.0: pe telefon, butonul stă în antet (Ion, 18.11.2026)
 import { pazaMfa } from './mfa.js'; // codul de pe telefon (MFA), Ion 14.11.2026
 
 const POZE = 'https://apps.instalcorp.ro/tasker/';
@@ -195,6 +196,14 @@ class IccTasker extends HTMLElement {
     window.addEventListener('tasks-changed', this._reincarca);
     window.addEventListener('focus', this._reincarca);
     PC.addEventListener?.('change', this._pc);
+    // v1.10.0: pe telefon butonul stă în antet; dacă aplicația redesenează antetul sau ecranul se lățește, îl reașezăm
+    this._tel = () => { if (this._vizibil && !this._deschis) this.deseneaza(); };
+    TELEFON.addEventListener?.('change', this._tel);
+    this._paza = setInterval(() => {
+      if (!this._vizibil || this._deschis) return;
+      const g = this._grpExt || this.querySelector('.ict-grp');
+      if (g && !bineAsezat(g)) this.deseneaza();
+    }, 1500);
     if (this._sb) this._porneste();
   }
   disconnectedCallback() {
@@ -204,6 +213,8 @@ class IccTasker extends HTMLElement {
     window.removeEventListener('tasks-changed', this._reincarca);
     window.removeEventListener('focus', this._reincarca);
     PC.removeEventListener?.('change', this._pc);
+    TELEFON.removeEventListener?.('change', this._tel); clearInterval(this._paza);
+    if (this._grpExt) { this._grpExt.remove(); this._grpExt = null; }
     clearInterval(this._ceas); this._pagina(false); this._anuntaLat(0);
   }
   attributeChangedCallback(n) { if (n === 'sus') this.style.setProperty('--ict-sus', (Number(this.getAttribute('sus')) || 68) + 'px'); }
@@ -293,6 +304,7 @@ class IccTasker extends HTMLElement {
   _aplicaLoc() {
     // cât timp muți butonul, Vasile rămâne pe loc (ca ținta „Pune la loc” să nu fie acoperită); se mută abia la eliberare
     if (!this._vizibil || (this._loc && !this._mutare)) this._anuntaLat(0);
+    if (this._grpExt) { this._anuntaLat(0); return; } // v1.10.0: în antet (telefon), Vasile nu se mai dă la stânga
     const g = this.querySelector('.ict-grp'); if (!g) return;
     const W = document.documentElement.clientWidth || innerWidth, w = g.offsetWidth || 120, h = g.offsetHeight || 64;
     const colt = W <= 640 ? 16 : 24;
@@ -491,6 +503,7 @@ class IccTasker extends HTMLElement {
   deseneaza(doarLista) {
     if (doarLista && this._deschis && this.querySelector('.ict-p')) { this._deseneazaLista(); return; }
     this.replaceChildren();
+    if (this._grpExt) { this._grpExt.remove(); this._grpExt = null; }
     if (!this._vizibil) { this._anuntaLat(0); return; }
     if (!this._deschis) {
       const c = this._textContor();
@@ -500,7 +513,18 @@ class IccTasker extends HTMLElement {
       b.innerHTML = `<i style="background-image:url('${esc(this._poza('fata'))}')"></i>`;
       const n = document.createElement('button'); n.type = 'button'; n.className = 'ict-nr' + c.cls; n.textContent = c.text; n.title = c.titlu;
       n.setAttribute('aria-label', 'Sarcini: ' + c.titlu); n.onclick = () => this.deschide();
-      g.append(b, n); this.append(g);
+      g.append(b, n);
+      // v1.10.0 (Ion 18.11.2026, varianta A): pe telefon, butonul mic în antet, lângă cercul cu inițiale (în dreapta lui Vasile);
+      // cifra roșie arată doar sarcinile noi; o atingere deschide panoul
+      if (aseaza(g)) {
+        this._grpExt = g; g.classList.add('ict'); // culorile lui Tasker (variabilele --t-*) și în afara componentei
+        b.onclick = () => this.deschide();
+        b.addEventListener('contextmenu', (e) => e.preventDefault());
+        if (this._d.noi > 0) n.textContent = String(this._d.noi);
+        this._anuntaLat(0);
+        return;
+      }
+      this.append(g);
       this._apasare(b, g); this._aplicaLoc();
       return;
     }
@@ -530,7 +554,7 @@ class IccTasker extends HTMLElement {
     // Vasile poate da sarcini (cu porțile din Sarcini): Tasker se închide, Vasile se deschide cu începutul cererii scris
     const v = document.querySelector('icc-vasile');
     const bv = p.querySelector('.ict-vas');
-    if (!v || typeof v.deschide !== 'function' || !v.querySelector('.icv-fab')) bv.remove();
+    if (!v || typeof v.deschide !== 'function' || !(v.vizibil ?? v.querySelector('.icv-fab'))) bv.remove();
     else bv.onclick = async () => { this.inchide(); await v.deschide(); const ta = v.querySelector('.icv-ta'); if (ta && !ta.value) { ta.value = 'Dă o sarcină lui '; ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } };
     this._deseneazaLista();
   }

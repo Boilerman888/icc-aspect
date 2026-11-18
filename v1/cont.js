@@ -116,7 +116,10 @@ class IccUtilizator extends Derulant {
     const nume = this.getAttribute('nume') || '';
     const init = nume.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase() || '?';
     const nou = this.elemente.some((x) => x && x.nou);
+    // v1.10.0: pe telefon, Vasile și Tasker stau într-un locaș înaintea cercului (doc.js); îl păstrăm la redesenare
+    const doc = this.querySelector(':scope > .icc-doc');
     this.replaceChildren();
+    if (doc) this.append(doc);
     const b = el('button', 'relative flex size-8 cursor-pointer items-center justify-center rounded-full border border-border bg-secondary text-xs font-semibold text-secondary-foreground hover:bg-accent', init);
     b.type = 'button'; b.title = nume; b.setAttribute('aria-label', 'Contul tău: ' + nume); b.setAttribute('aria-haspopup', 'menu'); b.setAttribute('aria-expanded', String(this._deschis));
     if (nou) b.append(el('span', 'absolute -top-0.5 -right-0.5 size-2 rounded-full bg-primary'));
