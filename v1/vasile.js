@@ -19,6 +19,7 @@
 // pe <html> clasa „icc-vasile-deschis” cât e deschis.
 
 import { pazaMfa } from './mfa.js'; // codul de pe telefon (MFA), Ion 14.11.2026
+import { intrebari } from './intrebari.js'; // întrebările către colegi, Ion 25.11.2026
 import { TELEFON, aseaza, bineAsezat } from './doc.js'; // v1.10.0: pe telefon, butonul stă în antet (Ion, 18.11.2026)
 
 const POZE = 'https://apps.instalcorp.ro/vasile/';
@@ -135,7 +136,7 @@ class IccVasile extends HTMLElement {
       else if (e.key === 'Escape' && this._deschis && this.contains(e.target)) this.inchide(); // Esc = minimizează
     };
   }
-  set sb(v) { this._sb = v; pazaMfa(v); if (this.isConnected) this._porneste(); }
+  set sb(v) { this._sb = v; pazaMfa(v); intrebari(v); if (this.isConnected) this._porneste(); }
   get sb() { return this._sb; }
   get vizibil() { return this._vizibil; }
   set context(v) { this._ctx = v; if (this._deschis) this._deseneazaCtx(); }
