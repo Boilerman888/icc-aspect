@@ -52,7 +52,6 @@ const STIL = `
 .icq-chip.gri{border-color:var(--q-bd);background:var(--q-acc);color:var(--q-mut)}
 .icq-chip:focus-visible{outline:2px solid var(--q-pri);outline-offset:2px}
 .icq-chip b{font-variant-numeric:tabular-nums}
-.icq-chip.plutitor{position:fixed;left:16px;bottom:16px;z-index:2147483000;margin:0;box-shadow:0 8px 24px rgba(0,0,0,.15)}
 @media (max-width:640px){.icq-chip{height:26px;padding:0 8px 0 6px;font-size:12px;margin-right:6px}.icq-chip .lung{display:none}}
 .icq-voal{position:fixed;inset:0;z-index:2147483100;background:rgba(15,20,30,.38);display:flex;align-items:flex-start;justify-content:center;padding:clamp(16px,7vh,80px) 16px 16px;animation:icq-in .16s ease-out}
 @keyframes icq-in{from{opacity:0}to{opacity:1}}
@@ -140,7 +139,10 @@ class IccIntrebari extends HTMLElement {
     document.addEventListener('keydown', (e) => { if (e.key !== 'Escape' || !this._deschis) return; this._deschis.tip === 'set' ? this.amana() : this.inchide(); });
     setInterval(() => this.incarca(), 60000);
     // antetul aplicației se poate redesena (cont.js păstrează locașul; altele nu): punem eticheta la loc
-    this._obs = new MutationObserver(() => { if (this._date && !document.querySelector('.icq-chip')?.isConnected) this.deseneaza(); });
+    this._obs = new MutationObserver(() => {
+      if (this._rafObs || !this._date || document.querySelector('.icq-chip')) return;
+      this._rafObs = requestAnimationFrame(() => { this._rafObs = 0; this.deseneaza(); });
+    });
     this._obs.observe(document.body, { childList: true, subtree: true });
   }
   // ---- legătura cu baza ----
@@ -193,7 +195,7 @@ class IccIntrebari extends HTMLElement {
   // doar pe calculator, doar în tabul văzut și cu focus. Baza spune „de_aratat” și ține minte că s-a arătat (afisat).
   _poateArata() {
     if (this._deschis || !DESEN.matches || !this._date?.de_aratat || !this.seturi().length) return;
-    if (document.visibilityState !== 'visible' || !document.hasFocus()) return;
+    if (document.visibilityState !== 'visible' || !document.hasFocus() || !this._loc()) return;
     this.deschide(true);
   }
   // ---- eticheta (antet) și bara (telefon) ----
@@ -209,11 +211,11 @@ class IccIntrebari extends HTMLElement {
     const adm = this._date?.admin; const noi = this._date?.raspunsuri_noi || 0; const desch = this._date?.deschise_total || 0;
     let chip = document.querySelector('.icq-chip');
     const arata = n || (adm && (noi || desch));
-    if (!arata) { chip?.remove(); document.querySelector('.icq-bara')?.remove(); return; }
-    if (!chip) { chip = document.createElement('button'); chip.type = 'button'; chip.className = 'icq icq-chip'; }
+    // fără cercul cu inițiale pe ecran (ecranul de intrare, omul a ieșit) nu arătăm nimic
     const loc = this._loc();
-    if (loc) { chip.classList.remove('plutitor'); if (chip.parentNode !== loc) loc.append(chip); }
-    else { chip.classList.add('plutitor'); if (chip.parentNode !== document.body) document.body.append(chip); }
+    if (!arata || !loc) { chip?.remove(); document.querySelector('.icq-bara')?.remove(); return; }
+    if (!chip) { chip = document.createElement('button'); chip.type = 'button'; chip.className = 'icq icq-chip'; }
+    if (chip.parentNode !== loc) loc.append(chip);
     chip.classList.remove('urgent', 'verde', 'gri');
     if (n) {
       chip.classList.toggle('urgent', urgent);

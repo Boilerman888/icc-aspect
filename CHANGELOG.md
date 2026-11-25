@@ -1,5 +1,9 @@
 # Istoric versiuni
 
+## v1.11.1 – 25.11.2026 (reparație)
+- `intrebari.js`: eticheta și fereastra apar doar cât se vede cercul cu inițiale (nu pe ecranul de intrare sau după „Ieși”);
+  supravegherea antetului se face cel mult o dată pe cadru, ca să nu încetinească aplicațiile care redesenează des.
+
 ## v1.11.0 – 25.11.2026
 - `intrebari.js` (nou): întrebările lui Ion și ale firelor către colegi, în orice aplicație (aprobat de Ion pe 25.11).
   Colegul care are întrebări nerăspunse vede în antet eticheta „N seturi de întrebări”; pe calculator formularul apare singur
