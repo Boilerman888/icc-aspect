@@ -10,6 +10,7 @@
 //   proprietăți: .elemente = [{ label, href, onClick, nou } sau { titlu }] (null-urile se sar), .onIesi = () => …   (sau evenimentul „iesire”)
 import { cx, popover, menuItem } from './ui.js';
 import { pazaMfa } from './mfa.js'; // codul de pe telefon (MFA), Ion 14.11.2026
+import { intrebari } from './intrebari.js'; // întrebările către colegi, Ion 25.11.2026
 
 const PORTAL = 'https://apps.instalcorp.ro/';
 const BIBLIOTECA = PORTAL + 'biblioteca/';
@@ -45,7 +46,7 @@ class IccAplicatie extends Derulant {
   static get observedAttributes() { return ['nume', 'acasa', 'cod', 'sigla-luminoasa', 'sigla-intunecata']; }
   set aplicatii(v) { this._apl = Array.isArray(v) ? v : null; if (this.isConnected) this.deseneaza(); }
   get aplicatii() { return this._apl; }
-  set sb(v) { this._sb = v; pazaMfa(v); if (this.isConnected) this.deseneaza(); }
+  set sb(v) { this._sb = v; pazaMfa(v); intrebari(v, { aplicatie: this.getAttribute('nume') }); if (this.isConnected) this.deseneaza(); }
   get sb() { return this._sb; }
   async incarca() {
     if (this._apl || !this._sb || this._incarc) return;
@@ -118,7 +119,9 @@ class IccUtilizator extends Derulant {
     const nou = this.elemente.some((x) => x && x.nou);
     // v1.10.0: pe telefon, Vasile și Tasker stau într-un locaș înaintea cercului (doc.js); îl păstrăm la redesenare
     const doc = this.querySelector(':scope > .icc-doc');
+    const icq = this.querySelector(':scope > .icq-loc'); // v1.11.0: eticheta întrebărilor (intrebari.js)
     this.replaceChildren();
+    if (icq) this.append(icq);
     if (doc) this.append(doc);
     const b = el('button', 'relative flex size-8 cursor-pointer items-center justify-center rounded-full border border-border bg-secondary text-xs font-semibold text-secondary-foreground hover:bg-accent', init);
     b.type = 'button'; b.title = nume; b.setAttribute('aria-label', 'Contul tău: ' + nume); b.setAttribute('aria-haspopup', 'menu'); b.setAttribute('aria-expanded', String(this._deschis));

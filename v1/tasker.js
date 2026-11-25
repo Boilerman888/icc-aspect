@@ -19,6 +19,7 @@
 
 import { TELEFON, aseaza, bineAsezat } from './doc.js'; // v1.10.0: pe telefon, butonul stă în antet (Ion, 18.11.2026)
 import { pazaMfa } from './mfa.js'; // codul de pe telefon (MFA), Ion 14.11.2026
+import { intrebari } from './intrebari.js'; // întrebările către colegi, Ion 25.11.2026
 
 const POZE = 'https://apps.instalcorp.ro/tasker/';
 const OFERTE = 'https://oferte.instalcorp.ro/';
@@ -184,7 +185,7 @@ class IccTasker extends HTMLElement {
     this._laVasile = (e) => { if (e.detail?.deschis && this._deschis) this.inchide(); this._aplicaLoc(); };
     this._reincarca = () => this._incarca();
   }
-  set sb(v) { this._sb = v; pazaMfa(v); if (this.isConnected) this._porneste(); }
+  set sb(v) { this._sb = v; pazaMfa(v); intrebari(v); if (this.isConnected) this._porneste(); }
   get sb() { return this._sb; }
 
   connectedCallback() {

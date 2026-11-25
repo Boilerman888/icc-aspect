@@ -1,5 +1,16 @@
 # Istoric versiuni
 
+## v1.11.0 – 25.11.2026
+- `intrebari.js` (nou): întrebările lui Ion și ale firelor către colegi, în orice aplicație (aprobat de Ion pe 25.11).
+  Colegul care are întrebări nerăspunse vede în antet eticheta „N seturi de întrebări”; pe calculator formularul apare singur
+  o dată la 10:00, 13:00 și 15:00 (ora României), doar în tabul la care se uită; „Mai târziu” îl amână până la ora următoare.
+  Pe telefon și tabletă nu apare nimic singur: o bară sub antet cu „Răspunde” deschide formularul ca foaie de jos.
+  Fiecare răspuns se salvează singur; un set trimis într-un tab se închide în toate taburile și aplicațiile (timp real, schema `intrebari`).
+- Ion (administratorul) vede eticheta verde „N răspunsuri noi” (sau gri „N seturi deschise”) și panoul cu răspunsurile,
+  cine a deschis și cine a amânat; „Am văzut” și „Redeschide”.
+- Pornește singur din `<icc-aplicatie>`, `<icc-vasile>` și `<icc-tasker>` când primesc clientul Supabase; aplicațiile doar urcă versiunea.
+  `cont.js` păstrează locul etichetei când redesenează cercul cu inițiale.
+
 ## v1.10.0 – 18.11.2026
 - Pe telefon (ecran sub 640 px, ținut în picioare, sau telefon culcat), butoanele lui Vasile și Tasker nu mai plutesc în colțul
   din dreapta-jos (acopereau „Salvează”, barele de jos și finalul fișelor): stau mici (30 px) în antet, chiar în stânga cercului
