@@ -1,5 +1,11 @@
 # Istoric versiuni
 
+## v1.13.0 – 26.11.2026
+- `intrebari.js`: anunțuri (Ion, 26.11). Un set cu `anunt = true` apare în aceeași fereastră ca întrebările, cu textul anunțului
+  și două butoane: „Citește mai târziu” (revine la ora fixă următoare) și „Am citit” (Ion vede ora la „Răspunsuri noi”).
+  Eticheta din antet spune „N anunț/anunțuri”; pe telefon bara spune „un anunț de la Ion” cu butonul „Citește”.
+- Are nevoie de migrația `intrebari` „anunțuri” din 26.11 (coloana `anunt`; anunțul nou apare imediat, fără ora fixă).
+
 ## v1.12.0 – 26.11.2026
 - `intrebari.js`: trimitere parțială (Ion, 26.11). Un singur buton „Trimite”, care trimite tot ce e completat, chiar dacă nu e tot.
   Răspunsurile trimise ies din formular; întrebările rămase apar ca listă restrânsă (cu numerotare nouă) și revin la 10, 13 și 15.
