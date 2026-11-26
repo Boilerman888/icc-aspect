@@ -4,6 +4,8 @@
 //   • în antet, lângă cercul cu inițiale, eticheta „N seturi de întrebări”; un clic deschide formularul oricând;
 //   • pe calculator (ecran lat și maus) formularul apare singur, o dată la orele 10:00, 13:00 și 15:00 (ora României),
 //     doar în tabul la care se uită omul; „Mai târziu” îl amână până la ora fixă următoare;
+//   • „Trimite” trimite tot ce e completat, chiar dacă nu e tot (Ion, 26.11.2026): răspunsurile trimise ies din formular,
+//     întrebările rămase revin ca listă restrânsă la orele fixe; „Istoricul meu” arată răspunsurile deja trimise;
 //   • pe telefon și tabletă nu apare nimic singur: o bară sub antet cu „Răspunde”, care deschide formularul ca foaie de jos.
 // Ce vede Ion (administratorul): eticheta verde „N răspunsuri noi” (sau gri „N deschise”) și panoul cu toate seturile,
 //   răspunsurile primite, cine a văzut, cine a amânat; „Am văzut” și „Redeschide”.
@@ -33,6 +35,17 @@ function termenText(iso) {
 }
 const DESEN = typeof matchMedia === 'function' ? matchMedia('(min-width:1024px) and (hover:hover) and (pointer:fine)') : { matches: true, addEventListener() {} };
 const intrebariReale = (s) => (s.intrebari || []).filter((q) => q.tip !== 'sectiune');
+const trimisa = (s, q) => !!s.raspunsuri && Object.prototype.hasOwnProperty.call(s.raspunsuri, q.cheie);
+const ramase = (s) => intrebariReale(s).filter((q) => !trimisa(s, q));
+// întrebările rămase, cu secțiunile care mai au cel puțin o întrebare rămasă sub ele
+function deAfisat(s) {
+  const l = s.intrebari || []; const out = [];
+  l.forEach((q, i) => {
+    if (q.tip !== 'sectiune') { if (!trimisa(s, q)) out.push(q); return; }
+    for (let j = i + 1; j < l.length && l[j].tip !== 'sectiune'; j++) if (!trimisa(s, l[j])) { out.push(q); return; }
+  });
+  return out;
+}
 const linkSigur = (u) => (/^https:\/\//i.test(u || '') ? u : null);
 
 const STIL = `
@@ -233,7 +246,7 @@ class IccIntrebari extends HTMLElement {
     if (!bara) { bara = document.createElement('div'); bara.className = 'icq icq-bara'; ant ? ant.after(bara) : document.body.prepend(bara); }
     bara.style.top = ant && /sticky|fixed/.test(getComputedStyle(ant).position) ? ant.offsetHeight + 'px' : '0px';
     bara.classList.toggle('urgent', urgent);
-    const q = lista.reduce((t, s) => t + intrebariReale(s).length, 0);
+    const q = lista.reduce((t, s) => t + ramase(s).length, 0);
     bara.innerHTML = `${SVG(I.q, 16)}<span class="tx"><b>${q} ${q === 1 ? 'întrebare' : 'întrebări'}</b> de la Ion${urgent ? ' · <b>urgent</b>' : ''}</span>
       <button type="button" class="icq-b pri" data-r>Răspunde</button>`;
     bara.querySelector('[data-r]').onclick = () => this.deschide(false);
@@ -257,9 +270,9 @@ class IccIntrebari extends HTMLElement {
     this._deschis = { tip: 'set', id: s.id };
     this._ciorna = { ...(s.ciorna || {}) };
     const calc = DESEN.matches; const tt = termenText(s.termen); const total = this._lista.length;
-    const nq = intrebariReale(s).length; const leg = linkSigur(s.legatura);
+    const nq = ramase(s).length; const nt = intrebariReale(s).length - nq; const leg = linkSigur(s.legatura);
     let nr = 0;
-    const corp = (s.intrebari || []).map((q) => q.tip === 'sectiune'
+    const corp = deAfisat(s).map((q) => q.tip === 'sectiune'
       ? `<div class="icq-sec">${esc(q.text)}${q.ajutor ? `<small>${esc(q.ajutor)}</small>` : ''}</div>`
       : this._q(q, ++nr, this._ciorna[q.cheie], !!alt)).join('');
     document.querySelector('.icq-voal')?.remove();
@@ -270,7 +283,7 @@ class IccIntrebari extends HTMLElement {
         <div class="tt"><h3 id="icq-t">${esc(s.titlu)}</h3>
           <div class="icq-meta"><span class="icq-tag">de la ${esc(s.de_la)}</span>${s.subiect ? `<span class="icq-tag">${esc(s.subiect)}</span>` : ''}
           ${tt ? `<span class="icq-tag ${tt[1]}">${SVG(I.ceas, 12)} termen ${esc(tt[0])}</span>` : ''}${s.urgent ? '<span class="icq-tag rosu">urgent</span>' : ''}
-          <span>${nq} ${nq === 1 ? 'întrebare' : 'întrebări'}</span></div></div>
+          <span>${nq} ${nq === 1 ? 'întrebare' : 'întrebări'}${nt ? (nq === 1 ? ' rămasă' : ' rămase') : ''}</span>${nt ? `<span class="icq-tag verde">${SVG(I.ok, 12)} ${nt} ${nt === 1 ? 'trimisă' : 'trimise'}</span>` : ''}</div></div>
         ${total > 1 ? `<div class="icq-nav"><button type="button" class="icq-ib" data-st ${this._idx ? '' : 'disabled'} aria-label="Setul anterior">${SVG(I.st)}</button>${this._idx + 1}/${total}<button type="button" class="icq-ib" data-dr ${this._idx < total - 1 ? '' : 'disabled'} aria-label="Setul următor">${SVG(I.dr)}</button></div>` : ''}
         <button type="button" class="icq-ib" data-x aria-label="Închide (răspund mai târziu)">${SVG(I.x)}</button></div>
       <div class="icq-bd">
@@ -280,8 +293,9 @@ class IccIntrebari extends HTMLElement {
       </div>
       <div class="icq-ft">
         <button type="button" class="icq-b" data-amana>${SVG(I.ceas, 14)} Mai târziu</button>
+        ${this._date?.are_istoric ? '<button type="button" class="icq-b" data-istoric>Istoricul meu</button>' : ''}
         <span class="stare" data-stare>${s.ciorna_la ? 'Ciorna e salvată ' + cand(s.ciorna_la) : 'Fiecare răspuns se salvează singur'}</span><span class="sp"></span>
-        <button type="button" class="icq-b pri" data-trimite ${alt ? 'disabled' : ''}>${SVG(I.ok, 14)} Trimite răspunsurile</button>
+        <button type="button" class="icq-b pri" data-trimite ${alt ? 'disabled' : ''} title="Trimite tot ce ai completat; întrebările fără răspuns rămân pentru mai târziu">${SVG(I.ok, 14)} Trimite</button>
       </div></div>`;
     document.body.append(v);
     const f = v.firstElementChild;
@@ -291,6 +305,7 @@ class IccIntrebari extends HTMLElement {
     f.querySelector('[data-dr]')?.addEventListener('click', () => { this._elibereaza(); this._idx++; this._arata(); });
     f.querySelector('[data-preia]')?.addEventListener('click', async () => { await this.rpc('deschis_in', { p_set: s.id, p_tab: TAB, p_app: this._app }); s.deschis_in = { tab: TAB }; this._arata(); });
     f.querySelector('[data-amana]').onclick = () => this.amana();
+    f.querySelector('[data-istoric]')?.addEventListener('click', async () => { await this._golesteCiorna(); this._elibereaza(); this.deschideIstoric(); });
     f.querySelector('[data-trimite]').onclick = () => this._trimite(f, s);
     f.querySelectorAll('[data-op]').forEach((btn) => btn.onclick = () => {
       btn.closest('.icq-ops').querySelectorAll('.icq-op').forEach((o) => o.classList.toggle('on', o === btn));
@@ -318,8 +333,9 @@ class IccIntrebari extends HTMLElement {
   _umple(s) {
     const f = document.querySelector('.icq-voal'); if (!f) return;
     if (!!this._altTab(s) !== !!f.querySelector('.icq-alt')) return this._arata();
+    if (f.querySelectorAll('.icq-q').length !== ramase(s).length) return this._arata();
     for (const q of s.intrebari || []) {
-      if (q.tip === 'sectiune' || q.cheie in (this._asteapta || {})) continue;
+      if (q.tip === 'sectiune' || trimisa(s, q) || q.cheie in (this._asteapta || {})) continue;
       const el = f.querySelector(`.icq-q[data-q="${CSS.escape(q.cheie)}"]`); if (!el) continue;
       const v = (s.ciorna || {})[q.cheie] ?? ''; this._ciorna[q.cheie] = v;
       const inp = el.querySelector('textarea,input'); if (inp && document.activeElement !== inp && inp.value !== v) inp.value = v;
@@ -347,28 +363,67 @@ class IccIntrebari extends HTMLElement {
     const urm = this._date?.urmatoarea_ora;
     this._toast(DESEN.matches && urm ? `Te întreb din nou ${cand(urm)}. Eticheta din antet rămâne.` : 'Răspunsurile tale sunt salvate. Le găsești la eticheta din antet.');
   }
+  // Un singur buton „Trimite” (Ion, 26.11.2026): pleacă tot ce e completat; restul rămâne și revine la orele fixe.
   async _trimite(f, s) {
     await this._golesteCiorna();
-    const qs = intrebariReale(s);
-    const lipsa = qs.map((q, i) => (String(this._ciorna[q.cheie] ?? '').trim() ? null : i + 1)).filter(Boolean);
-    f.querySelectorAll('.icq-q').forEach((el) => el.classList.toggle('lipsa', !String(this._ciorna[el.dataset.q] ?? '').trim()));
+    const qs = ramase(s);
+    const gata = qs.filter((q) => String(this._ciorna[q.cheie] ?? '').trim());
+    const rest = qs.length - gata.length;
     f.querySelector('.icq-conf')?.remove();
     const bd = f.querySelector('.icq-bd');
-    if (lipsa.length) { bd.insertAdjacentHTML('beforeend', `<div class="icq-conf">Lipsesc răspunsurile la ${lipsa.join(', ')}. Dacă nu știi, apasă „Nu știu”.</div>`); bd.lastElementChild.scrollIntoView({ block: 'nearest' }); return; }
-    bd.insertAdjacentHTML('beforeend', `<div class="icq-conf"><b>Trimiți răspunsurile?</b> După trimitere nu le mai poți schimba; doar Ion le poate redeschide.
+    if (!gata.length) { bd.insertAdjacentHTML('beforeend', '<div class="icq-conf">Nu ai completat niciun răspuns. Scrie cel puțin un răspuns (sau apasă „Nu știu”), apoi „Trimite”.</div>'); bd.lastElementChild.scrollIntoView({ block: 'nearest' }); return; }
+    const urm = this._date?.urmatoarea_ora;
+    const txtRest = rest ? ` Rămân ${rest === 1 ? 'o întrebare fără răspuns' : rest + ' întrebări fără răspuns'}; ${rest === 1 ? 'o primești' : 'le primești'} din nou${urm ? ' ' + cand(urm) : ' la ora fixă următoare'}.` : '';
+    bd.insertAdjacentHTML('beforeend', `<div class="icq-conf"><b>Trimiți ${gata.length === 1 ? 'răspunsul' : gata.length + ' răspunsuri'}?</b> După trimitere nu le mai poți schimba; doar Ion le poate redeschide.${esc(txtRest)}
       <div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="icq-b" data-nu>Mai verific</button><button type="button" class="icq-b rosu" data-da>Da, trimite</button></div></div>`);
     bd.lastElementChild.scrollIntoView({ block: 'nearest' });
     bd.querySelector('[data-nu]').onclick = () => bd.querySelector('.icq-conf').remove();
     bd.querySelector('[data-da]').onclick = async (e) => {
       e.currentTarget.disabled = true;
-      const { error } = await this.rpc('trimite', { p_set: s.id, p_raspunsuri: this._ciorna });
+      const { data, error } = await this.rpc('trimite', { p_set: s.id, p_raspunsuri: this._ciorna });
       if (error) { bd.querySelector('.icq-conf').textContent = error.message; return; }
-      this._toast('Răspunsurile au plecat la Ion. Mulțumim!');
-      this._lista = this._lista.filter((id) => id !== s.id); this._idx = Math.min(this._idx, this._lista.length - 1);
-      this._date.seturi = this.seturi().filter((x) => x.id !== s.id);
-      if (this._lista.length) this._arata(); else this.inchide();
+      if (this._date) this._date.are_istoric = true;
+      if (data?.complet || !data?.raman) {
+        this._toast('Răspunsurile au plecat la Ion. Mulțumim!');
+        this._lista = this._lista.filter((id) => id !== s.id); this._idx = Math.min(this._idx, this._lista.length - 1);
+        this._date.seturi = this.seturi().filter((x) => x.id !== s.id);
+        if (this._lista.length) this._arata(); else this.inchide();
+      } else {
+        this._toast(`Am trimis ${data.trimise === 1 ? 'un răspuns' : data.trimise + ' răspunsuri'}. Rămân ${data.raman === 1 ? 'o întrebare' : data.raman + ' întrebări'} pentru mai târziu.`);
+        const r = { ...(s.raspunsuri || {}) }; const c = { ...(s.ciorna || {}) };
+        for (const q of gata) { r[q.cheie] = String(this._ciorna[q.cheie]).trim(); delete c[q.cheie]; }
+        s.raspunsuri = r; s.ciorna = c; this._arata();
+      }
       this.incarca();
     };
+  }
+  // ---- istoricul colegului: răspunsurile deja trimise (doar citire) ----
+  async deschideIstoric() {
+    this._deschis = { tip: 'istoric' };
+    const { data, error } = await this.rpc('istoric', { p_zile: 90 });
+    if (this._deschis?.tip !== 'istoric') return;
+    const l = error ? [] : data || []; const calc = DESEN.matches;
+    const card = (s) => { let n = 0; const tr = s.trimise || {};
+      const rows = (s.intrebari || []).filter((q) => q.tip !== 'sectiune' && trimisa(s, q)).map((q) =>
+        `<span class="n">${++n}.</span><span class="qq">${esc(q.text)}</span><span></span><span class="rr">${esc(s.raspunsuri[q.cheie])}${tr[q.cheie]?.la ? ` <small style="font-weight:400;color:var(--q-mut)">· trimis ${cand(tr[q.cheie].la)}</small>` : ''}</span>`).join('');
+      const rest = ramase(s).length;
+      return `<div class="icq-set"><div class="r1"><b>${esc(s.titlu)}</b></div>
+        <div class="mt">${esc(s.de_la)}${s.subiect ? ' · ' + esc(s.subiect) : ''}${s.trimis_la ? ' · complet' : rest ? ` · mai ${rest === 1 ? 'ai o întrebare' : 'ai ' + rest + ' întrebări'} de răspuns` : ''}</div>
+        <div class="icq-qa">${rows}</div></div>`; };
+    document.querySelector('.icq-voal')?.remove();
+    const v = document.createElement('div'); v.className = 'icq icq-voal' + (calc ? '' : ' jos'); document.body.append(v);
+    v.innerHTML = `<div class="${calc ? 'icq-fer lat' : 'icq-foaie'} icq-adm" role="dialog" aria-modal="true" aria-labelledby="icq-ti">
+      ${calc ? '' : '<div class="maner"></div>'}
+      <div class="icq-hd"><span class="ic">${SVG(I.q, 17)}</span><div class="tt"><h3 id="icq-ti">Istoricul meu</h3>
+        <div class="icq-meta">Răspunsurile pe care le-ai trimis în ultimele 90 de zile. Nu se mai pot schimba; dacă e o greșeală, spune-i lui Ion.</div></div>
+        <button type="button" class="icq-ib" data-x aria-label="Închide">${SVG(I.x)}</button></div>
+      <div class="icq-bd">${error ? `<div class="icq-conf">${esc(error.message)}</div>` : ''}
+        ${l.length ? l.map(card).join('') : '<div class="icq-gol">Nu ai trimis încă răspunsuri.</div>'}</div>
+      ${this.seturi().length ? `<div class="icq-ft"><span class="sp"></span><button type="button" class="icq-b pri" data-inapoi>Înapoi la întrebări</button></div>` : ''}</div>`;
+    v.onmousedown = (e) => { if (e.target === v) this.inchide(); };
+    v.querySelector('[data-x]').onclick = () => this.inchide();
+    v.querySelector('[data-inapoi]')?.addEventListener('click', () => this.deschide(false));
+    this.deseneaza();
   }
   _elibereaza() {
     const id = this._deschis?.tip === 'set' && this._deschis.id;
@@ -384,21 +439,22 @@ class IccIntrebari extends HTMLElement {
     const { data, error } = await this.rpc('admin_lista', { p_zile: 30 });
     if (this._deschis?.tip !== 'admin') return;
     const l = error ? [] : data || [];
-    const noi = l.filter((s) => s.trimis_la && !s.vazut_admin_la);
-    const desch = l.filter((s) => !s.trimis_la);
+    const noi = l.filter((s) => s.partial_la && !s.vazut_admin_la);
+    const desch = l.filter((s) => !s.trimis_la && !noi.includes(s));
     const vechi = l.filter((s) => s.trimis_la && s.vazut_admin_la);
     const calc = DESEN.matches;
-    const qa = (s) => { const r = s.raspunsuri || s.ciorna || {}; let n = 0;
+    const qa = (s, cuCiorna) => { const r = cuCiorna ? { ...(s.ciorna || {}), ...(s.raspunsuri || {}) } : s.raspunsuri || {}; let n = 0;
       return `<div class="icq-qa">${(s.intrebari || []).map((q) => q.tip === 'sectiune' ? `<div class="sec">${esc(q.text)}</div>`
         : `<span class="n">${++n}.</span><span class="qq">${esc(q.text)}</span><span></span><span class="rr">${esc(r[q.cheie] || '—')}</span>`).join('')}</div>`; };
     const cine = (s) => (s.destinatari || []).map((d) => esc(d.nume) + (d.primul_vazut_la ? '' : ' (nu l-a deschis încă)') + (d.amanari ? (d.amanari === 1 ? ' · amânat o dată' : ` · amânat de ${d.amanari} ori`) : '')).join(', ');
     const card = (s, fel) => `<div class="icq-set${fel === 'nou' ? ' nou' : ''}" data-id="${s.id}">
       <div class="r1"><b>${esc(s.titlu)}</b>${fel === 'nou' ? `<button type="button" class="icq-b mic pri" data-vazut>${SVG(I.ok, 13)} Am văzut</button>` : ''}
-        ${fel === 'vechi' || fel === 'nou' ? `<button type="button" class="icq-b mic" data-redeschide title="Colegul poate schimba răspunsurile și le trimite din nou">Redeschide</button>` : ''}</div>
+        ${fel === 'vechi' || (fel === 'nou' && s.trimis_la) ? `<button type="button" class="icq-b mic" data-redeschide title="Colegul poate schimba răspunsurile și le trimite din nou">Redeschide</button>` : ''}</div>
       <div class="mt">${esc(s.de_la)}${s.subiect ? ' · ' + esc(s.subiect) : ''} · pentru ${cine(s)}</div>
       ${fel === 'deschis' ? `<div class="mt">Completat ${esc(s.progres)}${s.ciorna_la ? ' · ultima ciornă ' + cand(s.ciorna_la) : ''}${s.termen ? ' · termen ' + cand(s.termen) : ''}${s.deschis_in && Date.now() - Date.parse(s.deschis_in.la) < 600000 ? ' · <b>completează acum în ' + esc(s.deschis_in.app || '?') + '</b>' : ''}</div>
-          <details><summary>Vezi ciorna</summary>${qa(s)}</details>`
-        : `<div class="mt">Trimis de ${esc(s.trimis_de_nume || '?')} ${cand(s.trimis_la)}</div>${fel === 'nou' ? qa(s) : `<details><summary>Vezi răspunsurile</summary>${qa(s)}</details>`}`}
+          ${s.trimise_n ? `<div class="mt">Trimise ${s.trimise_n}/${s.total_n}${s.partial_la ? ' · ultima trimitere ' + cand(s.partial_la) : ''}</div>` : ''}
+          <details><summary>${s.trimise_n ? 'Vezi răspunsurile și ciorna' : 'Vezi ciorna'}</summary>${qa(s, true)}</details>`
+        : `<div class="mt">${s.trimis_la ? 'Trimis complet' : `Trimis parțial (${s.trimise_n}/${s.total_n}; restul îi revine colegului la orele fixe)`} de ${esc(s.trimis_de_nume || '?')} ${cand(s.partial_la || s.trimis_la)}</div>${fel === 'nou' ? qa(s) : `<details><summary>Vezi răspunsurile</summary>${qa(s)}</details>`}`}
     </div>`;
     const sectiune = (t, arr, fel, gol) => `<h4>${t} (${arr.length})</h4>${arr.length ? arr.map((s) => card(s, fel)).join('') : `<div class="icq-gol">${gol}</div>`}`;
     if (!reincarcare) document.querySelector('.icq-voal')?.remove();
@@ -409,7 +465,7 @@ class IccIntrebari extends HTMLElement {
     v.innerHTML = `<div class="${calc ? 'icq-fer lat' : 'icq-foaie'} icq-adm" role="dialog" aria-modal="true" aria-labelledby="icq-ta">
       ${calc ? '' : '<div class="maner"></div>'}
       <div class="icq-hd"><span class="ic">${SVG(I.q, 17)}</span><div class="tt"><h3 id="icq-ta">Întrebări către colegi</h3>
-        <div class="icq-meta">Răspunsurile apar aici imediat ce colegul apasă „Trimite”. Firul care a pus întrebarea le primește și el.</div></div>
+        <div class="icq-meta">Răspunsurile apar aici imediat ce colegul apasă „Trimite”, și cele parțiale. Firul care a pus întrebarea le primește și el.</div></div>
         <button type="button" class="icq-ib" data-x aria-label="Închide">${SVG(I.x)}</button></div>
       <div class="icq-bd">${error ? `<div class="icq-conf">${esc(error.message)}</div>` : ''}
         ${sectiune('Răspunsuri noi', noi, 'nou', 'Niciun răspuns nou.')}
@@ -420,7 +476,7 @@ class IccIntrebari extends HTMLElement {
     v.querySelector('[data-x]').onclick = () => this.inchide();
     v.querySelectorAll('[data-vazut]').forEach((b) => b.onclick = async () => { b.disabled = true; await this.rpc('admin_vazut', { p_set: +b.closest('[data-id]').dataset.id }); this.incarca(); this._arataAdmin(true); });
     v.querySelectorAll('[data-redeschide]').forEach((b) => b.onclick = async () => {
-      if (!confirm('Redeschizi setul? Colegul îl va vedea din nou în fereastră, cu răspunsurile lui, și îl trimite din nou.')) return;
+      if (!confirm('Redeschizi setul? Colegul îl va vedea din nou în fereastră, cu răspunsurile lui, și îl trimite din nou. Până atunci, firul nu mai vede răspunsurile.')) return;
       b.disabled = true; await this.rpc('admin_redeschide', { p_set: +b.closest('[data-id]').dataset.id }); this.incarca(); this._arataAdmin(true);
     });
   }

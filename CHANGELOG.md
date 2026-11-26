@@ -1,5 +1,12 @@
 # Istoric versiuni
 
+## v1.12.0 – 26.11.2026
+- `intrebari.js`: trimitere parțială (Ion, 26.11). Un singur buton „Trimite”, care trimite tot ce e completat, chiar dacă nu e tot.
+  Răspunsurile trimise ies din formular; întrebările rămase apar ca listă restrânsă (cu numerotare nouă) și revin la 10, 13 și 15.
+  În antet: „N trimise” lângă numărul întrebărilor rămase. „Istoricul meu” arată răspunsurile deja trimise (90 de zile, doar citire).
+- Panoul lui Ion: și trimiterile parțiale apar la „Răspunsuri noi”, cu „Trimis parțial (X/Y)”.
+- Are nevoie de migrația `intrebari` din 26.11 (funcția `istoric`, coloanele `trimise` și `partial_la`).
+
 ## v1.11.1 – 25.11.2026 (reparație)
 - `intrebari.js`: eticheta și fereastra apar doar cât se vede cercul cu inițiale (nu pe ecranul de intrare sau după „Ieși”);
   supravegherea antetului se face cel mult o dată pe cadru, ca să nu încetinească aplicațiile care redesenează des.
