@@ -7,6 +7,9 @@
 //   • „Trimite” trimite tot ce e completat, chiar dacă nu e tot (Ion, 26.11.2026): răspunsurile trimise ies din formular,
 //     întrebările rămase revin ca listă restrânsă la orele fixe; „Istoricul meu” arată răspunsurile deja trimise;
 //   • pe telefon și tabletă nu apare nimic singur: o bară sub antet cu „Răspunde”, care deschide formularul ca foaie de jos.
+// Anunțuri (Ion, 26.11.2026): un set cu anunt = true apare în aceeași fereastră, cu textul și două butoane:
+//   „Citește mai târziu” (revine la ora fixă următoare) și „Am citit” (Ion vede ora la care colegul a citit).
+//   Anunțul nou apare imediat, fără să aștepte ora fixă.
 // Ce vede Ion (administratorul): eticheta verde „N răspunsuri noi” (sau gri „N deschise”) și panoul cu toate seturile,
 //   răspunsurile primite, cine a văzut, cine a amânat; „Am văzut” și „Redeschide”.
 //
@@ -21,6 +24,7 @@ const TAB = Math.random().toString(36).slice(2, 8);
 const SVG = (d, w = 16) => `<svg viewBox="0 0 24 24" width="${w}" height="${w}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const I = { q: '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>', x: '<path d="M18 6 6 18M6 6l12 12"/>',
   st: '<path d="m15 18-6-6 6-6"/>', dr: '<path d="m9 18 6-6-6-6"/>', ceas: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', ok: '<path d="M20 6 9 17l-5-5"/>',
+  anunt: '<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
   ext: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>' };
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const hm = (iso) => new Date(iso).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Bucharest' });
@@ -46,6 +50,8 @@ function deAfisat(s) {
   });
   return out;
 }
+// textul anunțului: escapat, cu linkurile https făcute clicabile
+const cuLinkuri = (t) => esc(t).replace(/https:\/\/[^\s<]+[^\s<.,;:!?)]/g, (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
 const linkSigur = (u) => (/^https:\/\//i.test(u || '') ? u : null);
 
 const STIL = `
@@ -64,8 +70,8 @@ const STIL = `
 .icq-chip.verde{border-color:var(--q-verdebd);background:var(--q-verdebg);color:var(--q-verde)}
 .icq-chip.gri{border-color:var(--q-bd);background:var(--q-acc);color:var(--q-mut)}
 .icq-chip:focus-visible{outline:2px solid var(--q-pri);outline-offset:2px}
-.icq-chip b{font-variant-numeric:tabular-nums}
-@media (max-width:640px){.icq-chip{height:26px;padding:0 8px 0 6px;font-size:12px;margin-right:6px}.icq-chip .lung{display:none}}
+.icq-chip b{font-variant-numeric:tabular-nums}.icq-chip .scurt{display:none}
+@media (max-width:640px){.icq-chip{height:26px;padding:0 8px 0 6px;font-size:12px;margin-right:6px}.icq-chip .lung{display:none}.icq-chip .scurt{display:inline}}
 .icq-voal{position:fixed;inset:0;z-index:2147483100;background:rgba(15,20,30,.38);display:flex;align-items:flex-start;justify-content:center;padding:clamp(16px,7vh,80px) 16px 16px;animation:icq-in .16s ease-out}
 @keyframes icq-in{from{opacity:0}to{opacity:1}}
 @keyframes icq-sus{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
@@ -87,6 +93,7 @@ const STIL = `
 .icq-bd{flex:1;min-height:0;overflow-y:auto;padding:12px 16px 14px;display:flex;flex-direction:column;gap:14px;overscroll-behavior:contain}
 .icq-desc{font-size:13px;color:var(--q-mut);background:var(--q-surf);border-radius:8px;padding:8px 10px;white-space:pre-line}
 .icq-desc a{color:var(--q-pri)}
+.icq-anunt{font-size:14.5px;line-height:1.55;white-space:pre-line;overflow-wrap:anywhere}.icq-anunt a{color:var(--q-pri)}
 .icq-alt{font-size:13px;border:1px solid var(--q-galbd);background:var(--q-galbg);border-radius:8px;padding:8px 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .icq-sec{font-weight:650;font-size:13.5px;padding-top:4px;border-top:1px solid var(--q-bd);margin-top:2px}
 .icq-sec small{display:block;font-weight:400;font-size:12px;color:var(--q-mut);white-space:pre-line}
@@ -232,8 +239,11 @@ class IccIntrebari extends HTMLElement {
     chip.classList.remove('urgent', 'verde', 'gri');
     if (n) {
       chip.classList.toggle('urgent', urgent);
-      chip.innerHTML = `${SVG(I.q, 15)}<b>${n}</b> <span class="lung">${n === 1 ? 'set de întrebări' : 'seturi de întrebări'}</span>`;
-      chip.title = 'Întrebări de la Ion și de la fire'; chip.onclick = () => this.deschide(false);
+      const na = lista.filter((s) => s.anunt).length; const nq = n - na;
+      const parti = [nq && `${nq === 1 ? 'set de întrebări' : 'seturi de întrebări'}`, na && `${na === 1 ? 'anunț' : 'anunțuri'}`];
+      chip.innerHTML = nq && na ? `${SVG(I.q, 15)}<b class="scurt">${n}</b><span class="lung"><b>${nq}</b> ${parti[0]} · <b>${na}</b> ${parti[1]}</span>`
+        : `${SVG(na ? I.anunt : I.q, 15)}<b>${n}</b> <span class="lung">${parti[0] || parti[1]}</span>`;
+      chip.title = na && !nq ? 'Anunț de la Ion' : 'Întrebări de la Ion și de la fire'; chip.onclick = () => this.deschide(false);
     } else {
       chip.classList.add(noi ? 'verde' : 'gri');
       chip.innerHTML = noi ? `${SVG(I.ok, 15)}<b>${noi}</b> <span class="lung">${noi === 1 ? 'răspuns nou' : 'răspunsuri noi'}</span>`
@@ -246,9 +256,10 @@ class IccIntrebari extends HTMLElement {
     if (!bara) { bara = document.createElement('div'); bara.className = 'icq icq-bara'; ant ? ant.after(bara) : document.body.prepend(bara); }
     bara.style.top = ant && /sticky|fixed/.test(getComputedStyle(ant).position) ? ant.offsetHeight + 'px' : '0px';
     bara.classList.toggle('urgent', urgent);
-    const q = lista.reduce((t, s) => t + ramase(s).length, 0);
-    bara.innerHTML = `${SVG(I.q, 16)}<span class="tx"><b>${q} ${q === 1 ? 'întrebare' : 'întrebări'}</b> de la Ion${urgent ? ' · <b>urgent</b>' : ''}</span>
-      <button type="button" class="icq-b pri" data-r>Răspunde</button>`;
+    const q = lista.filter((s) => !s.anunt).reduce((t, s) => t + ramase(s).length, 0); const na = lista.filter((s) => s.anunt).length;
+    const txt = [q && `${q} ${q === 1 ? 'întrebare' : 'întrebări'}`, na && `${na === 1 ? 'un anunț' : na + ' anunțuri'}`].filter(Boolean).join(' și ');
+    bara.innerHTML = `${SVG(q ? I.q : I.anunt, 16)}<span class="tx"><b>${txt}</b> de la Ion${urgent ? ' · <b>urgent</b>' : ''}</span>
+      <button type="button" class="icq-b pri" data-r>${q ? 'Răspunde' : 'Citește'}</button>`;
     bara.querySelector('[data-r]').onclick = () => this.deschide(false);
   }
   // ---- formularul ----
@@ -268,6 +279,7 @@ class IccIntrebari extends HTMLElement {
     const alt = this._altTab(s);
     if (!alt && s.deschis_in?.tab !== TAB) this.rpc('deschis_in', { p_set: s.id, p_tab: TAB, p_app: this._app }).then(() => {});
     this._deschis = { tip: 'set', id: s.id };
+    if (s.anunt) return this._arataAnunt(s);
     this._ciorna = { ...(s.ciorna || {}) };
     const calc = DESEN.matches; const tt = termenText(s.termen); const total = this._lista.length;
     const nq = ramase(s).length; const nt = intrebariReale(s).length - nq; const leg = linkSigur(s.legatura);
@@ -316,6 +328,45 @@ class IccIntrebari extends HTMLElement {
     if (calc) setTimeout(() => f.querySelector(alt ? '[data-preia]' : 'textarea,input,.icq-op')?.focus({ preventScroll: true }), 60);
     this.deseneaza();
   }
+  // ---- anunțul: textul și două butoane ----
+  _arataAnunt(s) {
+    const calc = DESEN.matches; const total = this._lista.length; const leg = linkSigur(s.legatura);
+    document.querySelector('.icq-voal')?.remove();
+    const v = document.createElement('div'); v.className = 'icq icq-voal' + (calc ? '' : ' jos');
+    v.innerHTML = `<div class="${calc ? 'icq-fer' : 'icq-foaie'}" role="dialog" aria-modal="true" aria-labelledby="icq-t">
+      ${calc ? '' : '<div class="maner"></div>'}
+      <div class="icq-hd"><span class="ic">${SVG(I.anunt, 17)}</span>
+        <div class="tt"><h3 id="icq-t">${esc(s.titlu)}</h3>
+          <div class="icq-meta"><span class="icq-tag">Anunț</span><span class="icq-tag">de la ${esc(s.de_la)}</span>${s.urgent ? '<span class="icq-tag rosu">urgent</span>' : ''}<span>${cand(s.creat_la)}</span></div></div>
+        ${total > 1 ? `<div class="icq-nav"><button type="button" class="icq-ib" data-st ${this._idx ? '' : 'disabled'} aria-label="Anterior">${SVG(I.st)}</button>${this._idx + 1}/${total}<button type="button" class="icq-ib" data-dr ${this._idx < total - 1 ? '' : 'disabled'} aria-label="Următor">${SVG(I.dr)}</button></div>` : ''}
+        <button type="button" class="icq-ib" data-x aria-label="Închide (citesc mai târziu)">${SVG(I.x)}</button></div>
+      <div class="icq-bd"><div class="icq-anunt">${cuLinkuri(s.descriere)}</div>
+        ${leg ? `<a class="icq-b" style="align-self:flex-start" href="${esc(leg)}" target="_blank" rel="noopener">${SVG(I.ext, 14)} Deschide</a>` : ''}</div>
+      <div class="icq-ft">
+        <button type="button" class="icq-b" data-amana>${SVG(I.ceas, 14)} Citește mai târziu</button><span class="sp"></span>
+        <button type="button" class="icq-b pri" data-citit>${SVG(I.ok, 14)} Am citit</button>
+      </div></div>`;
+    document.body.append(v);
+    const f = v.firstElementChild;
+    v.addEventListener('mousedown', (e) => { if (e.target === v && calc) this.amana(); });
+    f.querySelector('[data-x]').onclick = () => this.amana();
+    f.querySelector('[data-amana]').onclick = () => this.amana();
+    f.querySelector('[data-st]')?.addEventListener('click', () => { this._idx--; this._arata(); });
+    f.querySelector('[data-dr]')?.addEventListener('click', () => { this._idx++; this._arata(); });
+    f.querySelector('[data-citit]').onclick = async (e) => {
+      const b = e.currentTarget; b.disabled = true;
+      const cheie = intrebariReale(s)[0]?.cheie || 'citit';
+      const { error } = await this.rpc('trimite', { p_set: s.id, p_raspunsuri: { [cheie]: 'Citit' } });
+      if (error) { b.disabled = false; f.querySelector('.icq-bd').insertAdjacentHTML('beforeend', `<div class="icq-conf">${esc(error.message)}</div>`); return; }
+      this._toast('Mulțumim! Ion vede că ai citit anunțul.');
+      if (this._date) { this._date.are_istoric = true; this._date.seturi = this.seturi().filter((x) => x.id !== s.id); }
+      this._lista = this._lista.filter((id) => id !== s.id); this._idx = Math.min(this._idx, this._lista.length - 1);
+      if (this._lista.length) this._arata(); else this.inchide();
+      this.incarca();
+    };
+    if (calc) setTimeout(() => f.querySelector('[data-citit]')?.focus({ preventScroll: true }), 60);
+    this.deseneaza();
+  }
   _q(q, nr, val, ro) {
     const d = ro ? 'disabled' : ''; const id = 'icq-' + esc(q.cheie);
     const lab = `<label class="t" for="${id}"><span>${nr}.</span>${esc(q.text)}</label>${q.ajutor ? `<div class="aj">${esc(q.ajutor)}</div>` : ''}`;
@@ -331,7 +382,7 @@ class IccIntrebari extends HTMLElement {
   }
   // răspunsurile venite din alt tab apar și aici (fără să atingem câmpul în care scrie omul)
   _umple(s) {
-    const f = document.querySelector('.icq-voal'); if (!f) return;
+    const f = document.querySelector('.icq-voal'); if (!f || s.anunt) return;
     if (!!this._altTab(s) !== !!f.querySelector('.icq-alt')) return this._arata();
     if (f.querySelectorAll('.icq-q').length !== ramase(s).length) return this._arata();
     for (const q of s.intrebari || []) {
